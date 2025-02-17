@@ -5,100 +5,235 @@ import java.util.*;
 
 /*  Требования к классу:
 
-    Возможность хранить задачи всех типов. Для этого вам нужно выбрать подходящую коллекцию.
+    Возможность хранить задачи всех типов. Для этого вам нужно выбрать
+    подходящую коллекцию.
     Методы для каждого из типа задач (Задача/Эпик/Подзадача):
      a. Получение списка всех задач.
      b. Удаление всех задач.
      c. Получение по идентификатору.
      d. Создание. Сам объект должен передаваться в качестве параметра.
-     e. Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
+     e. Обновление. Новая версия объекта с верным идентификатором
+     передаётся
+      в виде параметра.
      f. Удаление по идентификатору.
     Дополнительные методы:
      a. Получение списка всех подзадач определённого эпика.
     Управление статусами осуществляется по следующему правилу:
-     a. Менеджер сам не выбирает статус для задачи. Информация о нём приходит менеджеру вместе с информацией о самой задаче. По этим данным в одних случаях он будет сохранять статус, в других будет рассчитывать.
+     a. Менеджер сам не выбирает статус для задачи. Информация о нём
+     приходит менеджеру вместе с информацией о самой задаче. По
+     этим данным
+     в одних случаях он будет сохранять статус, в других будет
+     рассчитывать.
      b. Для эпиков:
-        если у эпика нет подзадач или все они имеют статус NEW, то статус должен быть NEW.
-        если все подзадачи имеют статус DONE, то и эпик считается завершённым — со статусом DONE.
+        если у эпика нет подзадач или все они имеют статус NEW, то
+        статус
+        должен быть NEW.
+        если все подзадачи имеют статус DONE, то и эпик считается
+        завершённым — со статусом DONE.
         во всех остальных случаях статус должен быть IN_PROGRESS.
 
 */
 
 public class TaskManager {
-    public static volatile int lastID = 0;
-    Map<Integer, Task> taskMap = new HashMap<>();
+    private int                    lastID     = 0;
+    private Map<Integer, Task>     taskMap    = new HashMap<>();
+    private Map<Integer, EpicTask> epicMap    = new HashMap<>();
+    private Map<Integer, SubTask>  subTaskMap = new HashMap<>();
 
 
-    public List<Task> getTasks(TaskTypes taskType){
-        return taskMap.values().stream().filter(task -> task.getTaskType() == taskType).toList();
-    }
+    public Task createTask(Task task) {
 
-    public void purgeAllTasksOfType(TaskTypes taskType){
-        for (Integer key : taskMap.keySet()){
-            Task value = taskMap.get(key);
-            if (value.getTaskType() == taskType){
-                taskMap.remove(key);
-            }
-        }
-    }
-
-    public Task getTask(int id){return taskMap.get(id);}
-
-
-    public Task createTask(Task task){
-
-        if (task.getId() == 0 ) {
-            int currentId = TaskManager.lastID++;
+        if (task.getId() == 0) {
+            int currentId = this.generateId();
             task.setId(currentId);
-
             taskMap.put(currentId, task);
-            if (TaskTypes.EPIC.equals(task.taskType)) {
-                List<SubTask> listOfSubtasks = getTasksOfEpic(currentId);
-                for (Task subtask : listOfSubtasks) {
-                    createTask(subtask);
-                }
-            }
         }
 
         return task;
 
     }
 
+    public EpicTask createEpic(EpicTask task) {
+
+        if (task.getId() == 0) {
+            int currentId = this.generateId();
+            task.setId(currentId);
+            epicMap.put(currentId, task);
+        }
+
+        return task;
+    }
+
+    public SubTask createSubTask(SubTask task) {
+
+        if (task.getId() == 0) {
+            int currentId = this.generateId();
+            task.setId(currentId);
+            subTaskMap.put(currentId, task);
+        }
+
+        return task;
+    }
+
+    public List<Task> getAllTask() {
+        return taskMap.values().stream().toList();
+    }
+
+    public List<EpicTask> getAllEpic() {
+        return epicMap.values().stream().toList();
+    }
+
+    public List<SubTask> getAllSubtask() {
+        return subTaskMap.values().stream().toList();
+    }
+
+
+    public void deleteAllTask() {
+        this.taskMap.clear();
+    }
+
+    public void deleteAllEpic() {
+        for (Integer id : epicMap.keySet()) {
+            deleteEpicById(id);
+        }
+    }
+
+    public void deleteAllSubtask() {
+        for (Integer id : subTaskMap.keySet()) {
+            deleteSubtaskById(id);
+        }
+    }
+
+    public Task getTaskById(int id) {
+        return this.taskMap.get(id);
+    }
+
+    public EpicTask getEpicById(int id) {
+        return this.epicMap.get(id);
+    }
+
+    public SubTask getSubtaskById(int id) {
+        return this.subTaskMap.get(id);
+    }
 
     public Task updateTask(Task task) {
         Task oldTask = getTask(task.getId());
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
         oldTask.setStatus(task.getStatus());
-        // В тз написано о том что эпик должен чекаться после каждого обновления подзадачи
-        if (oldTask instanceof SubTask){
-            SubTask currTask = (SubTask) task;
-            Task oldEpicTask = getTask(currTask.getParentId());
-            oldEpicTask.setStatus(task.getStatus());
-        }
         return oldTask;
     }
 
-    public Task removeTask(int id){
-        Task task = this.taskMap.get(id);
-        if (task instanceof EpicTask){
-            List<SubTask> subTasksList = getTasksOfEpic(id);
-                for (SubTask subTask : subTasksList) {
-                    this.taskMap.remove(subTask.getId());
-            }
-        }
-        task = this.taskMap.remove(id);
+    public SubTask updateSubTask(SubTask task) {
 
-        return task;
+        int     id      = task.getId();
+        SubTask oldTask = getSubtaskById(id);
+        oldTask.setName(task.getName());
+        oldTask.setDescription(task.getDescription());
+
+        int oldParentId = oldTask.getParentId();
+
+        if (oldParentId != 0) {
+            getEpicById(oldParentId).removeSubtask(id);
+            checkStatusOfEpic(oldParentId);
+        }
+
+        int newParentId = task.getParentId();
+        oldTask.setParentId(newParentId);
+
+        getEpicById(newParentId).addNewSubtask(id);
+
+        oldTask.setStatus(task.getStatus());
+
+        checkStatusOfEpic(newParentId);
+
+        return oldTask;
     }
 
 
-    public List<SubTask> getTasksOfEpic(int id){
+    public EpicTask updateEpic(EpicTask task) {
+        EpicTask oldTask = getEpicById(task.getId());
+        oldTask.setName(task.getName());
+        oldTask.setDescription(task.getDescription());
+        oldTask.setSubtasksId(task.getSubtasksIDs());
 
-        EpicTask epicTask = (EpicTask) taskMap.get(id);
-        if (epicTask == null) return new ArrayList<>();
+        checkStatusOfEpic(task.getId());
+        return oldTask;
+    }
 
-        return epicTask.getSubtasksList();
+    private void checkStatusOfEpic(int id) {
+        EpicTask epic = getEpicById(id);
+        if (epic == null) return;
+
+        List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
+        Statuses      newStatus;
+
+        List<Statuses> distinctStatuses = subTasksOfEpic.stream()
+                                                        .map(SubTask::getStatus)
+                                                        .distinct()
+                                                        .toList();
+
+        if (distinctStatuses.size() > 1) {
+            newStatus = Statuses.IN_PROGRESS;
+        } else {
+            newStatus = distinctStatuses.stream()
+                                        .findFirst()
+                                        .orElse(Statuses.NEW);
+        }
+        epic.setStatus(newStatus);
+
+    }
+
+    public Task deleteTaskById(int id) {
+        return this.taskMap.remove(id);
+    }
+
+    public EpicTask deleteEpicById(int id) {
+        EpicTask epic = this.epicMap.get(id);
+        if (epic != null) {
+            List<SubTask> subTaskList = getTasksOfEpic(epic.getId());
+            for (SubTask subTask : subTaskList) {
+                deleteSubtaskById(subTask.getId());
+            }
+        }
+
+        return this.epicMap.remove(id);
+    }
+
+    public SubTask deleteSubtaskById(int id) {
+        SubTask subTask = subTaskMap.remove(id);
+
+        if (subTask != null) {
+            getEpicById(subTask.getParentId()).removeSubtask(id);
+        }
+
+        return subTask;
+    }
+
+    public Task getTask(int id) {
+        return taskMap.get(id);
+    }
+
+
+    private int generateId() {
+        return ++this.lastID;
+    }
+
+
+    public List<SubTask> getTasksOfEpic(int id) {
+
+        EpicTask epicTask =
+                epicMap.getOrDefault(id, new EpicTask(""));
+
+
+        Set<Integer> ids = epicTask.getSubtasksIDs();
+
+
+        return subTaskMap.entrySet()
+                         .stream()
+                         .filter(entry -> ids.contains(entry.getKey()))
+                         .map(Map.Entry::getValue)
+                         .toList();
     }
 
 

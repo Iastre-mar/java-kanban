@@ -2,43 +2,22 @@ package ru.yandex.practicum.cva.tasktracker;
 
 import java.util.Objects;
 
-/** Абстрактный класс задачи.
- <p>
-    Обладает:
- <p>
-         id - присваивается при 'создании' в TaskManager,
-         а не при реальном создании объекта.
- <p>
-        name - Имя задачи.
- <p>
-        description - Описание задачи.
- <p>
-        status - Статус задачи, одно из значений enum Statuses.
- <p>
-        taskType - Тип задачи, одно из значений enum TaskTypes.
 
- */
-public abstract class Task {
+public class Task {
     protected int       id;
     protected String    name;
     protected String    description;
     protected Statuses  status;
-    protected TaskTypes taskType;
 
-    protected Task(String name, String description) {
+    public Task(String name, String description) {
         this.name        = name;
         this.description = description;
         this.status = Statuses.NEW;
     }
 
-    protected Task(String name) {
+    public Task(String name) {
         this.name = name;
         this.status = Statuses.NEW;
-    }
-
-
-    public TaskTypes getTaskType() {
-        return this.taskType;
     }
 
     public Statuses getStatus() {
@@ -98,8 +77,6 @@ public abstract class Task {
                '\'' +
                ", status=" +
                status +
-               ", taskType=" +
-               taskType +
                '}';
     }
 }

@@ -1,31 +1,40 @@
 package ru.yandex.practicum.cva.tasktracker;
 
-/** Класс подзадачи. <p>
-    Я не представляю себе как можно создать подзадачу к несуществующему
-     Эпику, поэтому вне пакета создание подзадач происходит только
-     через существующий объект Эпик.
 
- */
 public class SubTask extends Task{
-    protected int parentId;
+    private int parentId;
 
-    protected SubTask(String name, String description, int parentId) {
+    public SubTask(String name, String description) {
         super(name, description);
-        this.taskType = TaskTypes.SUBTASK;
-        this.parentId = parentId;
     }
 
-    protected SubTask(String name, int parentId) {
+    public SubTask(String name) {
         super(name);
-        this.taskType = TaskTypes.SUBTASK;
-        this.parentId = parentId;
     }
 
-    protected void setParentId(int parentId) {
+    public void setParentId(int parentId) {
         this.parentId = parentId;
     }
 
     public int getParentId() {
         return parentId;
+    }
+
+    @Override
+    public String toString() {
+        return "SubTask{" +
+               "id=" +
+               id +
+               ", name='" +
+               name +
+               '\'' +
+               ", description='" +
+               description +
+               '\'' +
+               ", status=" +
+               status +
+               ", parentId=" +
+               parentId +
+               '}';
     }
 }
