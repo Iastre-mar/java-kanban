@@ -86,6 +86,8 @@ public class Main {
         System.out.println("---------------------------------------");
 
 
+
+
         System.out.println("Четвертый Тест поменяем у второй простой задачи статус на выполнено:");
         secondCommonTask.setStatus(Statuses.DONE);
         secondCommonTask = tm.updateTask(secondCommonTask);
@@ -110,8 +112,35 @@ public class Main {
         tm.updateEpic(firstEpicTask);
 
         tm.getAllEpic().forEach(System.out::println);
+        System.out.println("---------------------------------------");
+
+        /*
+        System.out.println("Восьмой тест - удалим все сабтаски");
+
+        tm.deleteAllSubtask();
+        tm.getAllTask().forEach(System.out::println);
+        tm.getAllEpic().forEach(System.out::println);
+        tm.getAllSubtask().forEach(System.out::println);
+
+
 
         System.out.println("---------------------------------------");
+        */
+
+
+
+        /*
+        System.out.println("Девятый тест - удалим все Эпики");
+
+        tm.deleteAllEpic();
+        tm.getAllTask().forEach(System.out::println);
+        tm.getAllEpic().forEach(System.out::println);
+        tm.getAllSubtask().forEach(System.out::println);
+
+        System.out.println("---------------------------------------");
+
+         */
+
         System.out.println("Седьмой Тест удалим вторую задачу и второй эпик");
 
         tm.deleteTaskById(2);

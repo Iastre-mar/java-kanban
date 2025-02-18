@@ -34,6 +34,7 @@ import java.util.*;
 
 */
 
+// Это уже выровненный код, за совет спасибо
 public class TaskManager {
     private int                    lastID     = 0;
     private Map<Integer, Task>     taskMap    = new HashMap<>();
@@ -46,7 +47,7 @@ public class TaskManager {
         if (task.getId() == 0) {
             int currentId = this.generateId();
             task.setId(currentId);
-            taskMap.put(currentId, task);
+            taskMap.put(task.getId(), task);
         }
 
         return task;
@@ -58,7 +59,7 @@ public class TaskManager {
         if (task.getId() == 0) {
             int currentId = this.generateId();
             task.setId(currentId);
-            epicMap.put(currentId, task);
+            epicMap.put(task.getId(), task);
         }
 
         return task;
@@ -69,7 +70,7 @@ public class TaskManager {
         if (task.getId() == 0) {
             int currentId = this.generateId();
             task.setId(currentId);
-            subTaskMap.put(currentId, task);
+            subTaskMap.put(task.getId(), task);
         }
 
         return task;
@@ -87,19 +88,24 @@ public class TaskManager {
         return subTaskMap.values().stream().toList();
     }
 
-
     public void deleteAllTask() {
         this.taskMap.clear();
     }
 
+    /* Дошло)))
+     */
     public void deleteAllEpic() {
-        for (Integer id : epicMap.keySet()) {
+        Set<Integer> copyIDSet  = new HashSet<>(epicMap.keySet());
+        for (Integer id : copyIDSet) {
             deleteEpicById(id);
         }
     }
 
+    /* Дошло))))
+     */
     public void deleteAllSubtask() {
-        for (Integer id : subTaskMap.keySet()) {
+        Set<Integer> copyIDSet  = new HashSet<>(subTaskMap.keySet());
+        for (Integer id : copyIDSet) {
             deleteSubtaskById(id);
         }
     }
@@ -117,7 +123,7 @@ public class TaskManager {
     }
 
     public Task updateTask(Task task) {
-        Task oldTask = getTask(task.getId());
+        Task oldTask = getTaskById(task.getId());
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
         oldTask.setStatus(task.getStatus());
@@ -150,7 +156,6 @@ public class TaskManager {
         return oldTask;
     }
 
-
     public EpicTask updateEpic(EpicTask task) {
         EpicTask oldTask = getEpicById(task.getId());
         oldTask.setName(task.getName());
@@ -159,6 +164,54 @@ public class TaskManager {
 
         checkStatusOfEpic(task.getId());
         return oldTask;
+    }
+
+    public Task deleteTaskById(int id) {
+        return this.taskMap.remove(id);
+    }
+
+    public EpicTask deleteEpicById(int id) {
+        EpicTask epic = this.epicMap.get(id);
+        if (epic != null) {
+            List<SubTask> subTaskList = getTasksOfEpic(epic.getId());
+            for (SubTask subTask : subTaskList) {
+                deleteSubtaskById(subTask.getId());
+            }
+        }
+
+        return this.epicMap.remove(id);
+    }
+
+    public SubTask deleteSubtaskById(int id) {
+        SubTask subTask = subTaskMap.remove(id);
+
+        if (subTask != null) {
+            int parentId = subTask.getParentId();
+            getEpicById(parentId).removeSubtask(id);
+            checkStatusOfEpic(parentId);
+        }
+
+        return subTask;
+    }
+
+    private int generateId() {
+        return ++this.lastID;
+    }
+
+    public List<SubTask> getTasksOfEpic(int id) {
+
+        EpicTask epicTask =
+                epicMap.getOrDefault(id, new EpicTask(""));
+
+
+        Set<Integer> ids = epicTask.getSubtasksIDs();
+
+
+        return subTaskMap.entrySet()
+                         .stream()
+                         .filter(entry -> ids.contains(entry.getKey()))
+                         .map(Map.Entry::getValue)
+                         .toList();
     }
 
     private void checkStatusOfEpic(int id) {
@@ -182,58 +235,6 @@ public class TaskManager {
         }
         epic.setStatus(newStatus);
 
-    }
-
-    public Task deleteTaskById(int id) {
-        return this.taskMap.remove(id);
-    }
-
-    public EpicTask deleteEpicById(int id) {
-        EpicTask epic = this.epicMap.get(id);
-        if (epic != null) {
-            List<SubTask> subTaskList = getTasksOfEpic(epic.getId());
-            for (SubTask subTask : subTaskList) {
-                deleteSubtaskById(subTask.getId());
-            }
-        }
-
-        return this.epicMap.remove(id);
-    }
-
-    public SubTask deleteSubtaskById(int id) {
-        SubTask subTask = subTaskMap.remove(id);
-
-        if (subTask != null) {
-            getEpicById(subTask.getParentId()).removeSubtask(id);
-        }
-
-        return subTask;
-    }
-
-    public Task getTask(int id) {
-        return taskMap.get(id);
-    }
-
-
-    private int generateId() {
-        return ++this.lastID;
-    }
-
-
-    public List<SubTask> getTasksOfEpic(int id) {
-
-        EpicTask epicTask =
-                epicMap.getOrDefault(id, new EpicTask(""));
-
-
-        Set<Integer> ids = epicTask.getSubtasksIDs();
-
-
-        return subTaskMap.entrySet()
-                         .stream()
-                         .filter(entry -> ids.contains(entry.getKey()))
-                         .map(Map.Entry::getValue)
-                         .toList();
     }
 
 
