@@ -1,4 +1,4 @@
-package ru.yandex.practicum.cva.tasktracker;
+package ru.yandex.practicum.cva.task.tracker;
 
 
 import java.util.HashSet;

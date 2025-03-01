@@ -1,16 +1,5 @@
-/*     Проверка кода называется тестированием. Подробно вы изучите эту тему дальше в курсе. Тем не менее, сам процесс тестирования можно начать уже сейчас. Создайте в классе Main метод static void main(String[] args) и внутри него:
 
-        Создайте две задачи, а также эпик с двумя подзадачами и  эпик с одной подзадачей.
-        Распечатайте списки эпиков, задач и подзадач через System.out.println(..).
-        Измените статусы созданных объектов, распечатайте их. Проверьте, что статус задачи и подзадачи сохранился, а статус эпика рассчитался по статусам подзадач.
-        И, наконец, попробуйте удалить одну из задач и один из эпиков.
-        Воспользуйтесь дебаггером среды разработки, чтобы понять логику работы программы и отладить её.
-    Не оставляйте в коде мусор — превращённые в комментарии или ненужные куски кода. Это сквозной проект, на его основе вы будете делать несколько следующих домашних заданий.
-    Давайте коммитам осмысленные комментарии: порядок в репозитории и коде — ключ к успеху написания хороших программ.*/
-
-
-import ru.yandex.practicum.cva.tasktracker.*;
-
+import ru.yandex.practicum.cva.task.tracker.*;
 
 
 public class Main {
@@ -18,18 +7,18 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        TaskManager tm = new TaskManager();
+        InMemoryTaskManager tm = new InMemoryTaskManager();
 
 
         // Создание объектов
 
-        Task firstCommonTask = new Task("Первая" );
+        Task     firstCommonTask  = new Task("Первая" );
         Task     secondCommonTask = new Task("Вторая", "Описание второй");
-        EpicTask firstEpicTask  = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask = new EpicTask("Второй Эпик", "Описание второго эпика");
+        EpicTask firstEpicTask    = new EpicTask("Первый эпик");
+        EpicTask secondEpicTask   = new EpicTask("Второй Эпик", "Описание второго эпика");
 
-        SubTask firstSubTask = new SubTask("Первая подзадача");
-        SubTask    secondSubTask = new SubTask("Вторая подзадача", "Принадлежит первому Эпику");
+        SubTask firstSubTask  = new SubTask("Первая подзадача");
+        SubTask secondSubTask = new SubTask("Вторая подзадача", "Принадлежит первому Эпику");
         SubTask thirdSubTask  = new SubTask("Третья подзадача", "Принадлежит второму Эпику");
 
         // 'Создание' задач

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.cva.tasktracker;
+package ru.yandex.practicum.cva.task.tracker;
 
 
 public class SubTask extends Task{

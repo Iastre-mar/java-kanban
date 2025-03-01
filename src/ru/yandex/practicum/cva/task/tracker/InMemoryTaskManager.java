@@ -1,47 +1,16 @@
-package ru.yandex.practicum.cva.tasktracker;
+package ru.yandex.practicum.cva.task.tracker;
 
 import java.util.*;
 
 
-/*  Требования к классу:
-
-    Возможность хранить задачи всех типов. Для этого вам нужно выбрать
-    подходящую коллекцию.
-    Методы для каждого из типа задач (Задача/Эпик/Подзадача):
-     a. Получение списка всех задач.
-     b. Удаление всех задач.
-     c. Получение по идентификатору.
-     d. Создание. Сам объект должен передаваться в качестве параметра.
-     e. Обновление. Новая версия объекта с верным идентификатором
-     передаётся
-      в виде параметра.
-     f. Удаление по идентификатору.
-    Дополнительные методы:
-     a. Получение списка всех подзадач определённого эпика.
-    Управление статусами осуществляется по следующему правилу:
-     a. Менеджер сам не выбирает статус для задачи. Информация о нём
-     приходит менеджеру вместе с информацией о самой задаче. По
-     этим данным
-     в одних случаях он будет сохранять статус, в других будет
-     рассчитывать.
-     b. Для эпиков:
-        если у эпика нет подзадач или все они имеют статус NEW, то
-        статус
-        должен быть NEW.
-        если все подзадачи имеют статус DONE, то и эпик считается
-        завершённым — со статусом DONE.
-        во всех остальных случаях статус должен быть IN_PROGRESS.
-
-*/
-
-// Это уже выровненный код, за совет спасибо
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private int                    lastID     = 0;
     private Map<Integer, Task>     taskMap    = new HashMap<>();
     private Map<Integer, EpicTask> epicMap    = new HashMap<>();
     private Map<Integer, SubTask>  subTaskMap = new HashMap<>();
 
 
+    @Override
     public Task createTask(Task task) {
 
         if (task.getId() == 0) {
@@ -92,8 +61,6 @@ public class TaskManager {
         this.taskMap.clear();
     }
 
-    /* Дошло)))
-     */
     public void deleteAllEpic() {
         Set<Integer> copyIDSet  = new HashSet<>(epicMap.keySet());
         for (Integer id : copyIDSet) {
@@ -101,8 +68,6 @@ public class TaskManager {
         }
     }
 
-    /* Дошло))))
-     */
     public void deleteAllSubtask() {
         Set<Integer> copyIDSet  = new HashSet<>(subTaskMap.keySet());
         for (Integer id : copyIDSet) {
@@ -110,6 +75,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public Task getTaskById(int id) {
         return this.taskMap.get(id);
     }
@@ -122,6 +88,7 @@ public class TaskManager {
         return this.subTaskMap.get(id);
     }
 
+    @Override
     public Task updateTask(Task task) {
         Task oldTask = getTaskById(task.getId());
         oldTask.setName(task.getName());
@@ -166,6 +133,7 @@ public class TaskManager {
         return oldTask;
     }
 
+    @Override
     public Task deleteTaskById(int id) {
         return this.taskMap.remove(id);
     }
@@ -212,6 +180,10 @@ public class TaskManager {
                          .filter(entry -> ids.contains(entry.getKey()))
                          .map(Map.Entry::getValue)
                          .toList();
+    }
+
+    public List<Task> getHistory(){
+        return null;
     }
 
     private void checkStatusOfEpic(int id) {
