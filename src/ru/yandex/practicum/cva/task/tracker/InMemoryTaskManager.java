@@ -62,14 +62,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void deleteAllEpic() {
-        Set<Integer> copyIDSet  = new HashSet<>(epicMap.keySet());
+        Set<Integer> copyIDSet = new HashSet<>(epicMap.keySet());
         for (Integer id : copyIDSet) {
             deleteEpicById(id);
         }
     }
 
     public void deleteAllSubtask() {
-        Set<Integer> copyIDSet  = new HashSet<>(subTaskMap.keySet());
+        Set<Integer> copyIDSet = new HashSet<>(subTaskMap.keySet());
         for (Integer id : copyIDSet) {
             deleteSubtaskById(id);
         }
@@ -168,8 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public List<SubTask> getTasksOfEpic(int id) {
 
-        EpicTask epicTask =
-                epicMap.getOrDefault(id, new EpicTask(""));
+        EpicTask epicTask = epicMap.getOrDefault(id, new EpicTask(""));
 
 
         Set<Integer> ids = epicTask.getSubtasksIDs();
@@ -182,7 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
                          .toList();
     }
 
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return null;
     }
 
