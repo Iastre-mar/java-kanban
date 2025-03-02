@@ -8,30 +8,24 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    InMemoryTaskManager tm;
-    Task[]              tasks;
+    TaskManager tm;
+    Task[]      tasks;
 
     @BeforeEach
     void setUp() {
-        tm = new InMemoryTaskManager();
+        tm = new InMemoryTaskManager(new InMemoryHistoryManager());
 
         Task     firstCommonTask  = new Task("Первая");
         Task     secondCommonTask = new Task("Вторая", "Описание второй");
         EpicTask firstEpicTask    = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask   = new EpicTask(
-                "Второй Эпик",
-                "Описание второго эпика"
-        );
+        EpicTask secondEpicTask =
+                new EpicTask("Второй Эпик", "Описание второго эпика");
 
-        SubTask firstSubTask  = new SubTask("Первая подзадача");
-        SubTask secondSubTask = new SubTask(
-                "Вторая подзадача",
-                "Принадлежит первому Эпику"
-        );
-        SubTask thirdSubTask  = new SubTask(
-                "Третья подзадача",
-                "Принадлежит второму Эпику"
-        );
+        SubTask firstSubTask = new SubTask("Первая подзадача");
+        SubTask secondSubTask =
+                new SubTask("Вторая подзадача", "Принадлежит первому Эпику");
+        SubTask thirdSubTask =
+                new SubTask("Третья подзадача", "Принадлежит второму Эпику");
 
         tasks = new Task[]{
                 firstCommonTask,
@@ -101,7 +95,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void createMethodsShouldNotOverrideIdsAndAssignDifferentIds() {
+    void createMethodsShouldNotOverrideIdsAndNotAssignDifferentIds() {
         Task commonTask = tasks[0];
         tm.createTask(commonTask);
         Integer commonTaskFirstId = Integer.valueOf(commonTask.getId());
@@ -125,6 +119,33 @@ class InMemoryTaskManagerTest {
         Integer subTaskSecondId = Integer.valueOf(subTask.getId());
         assertEquals(subTaskFirstId, subTaskSecondId);
         assertNotEquals(subTaskFirstId, epicTaskFirstId);
+    }
+
+    @Test
+    void createMethodsShouldOnlyAssignIds(){
+        Task commonTask = tasks[0].clone();
+        tm.createTask(commonTask);
+        assertNotEquals(tasks[0].id, commonTask.id);
+        assertEquals(tasks[0].name, commonTask.name);
+        assertEquals(tasks[0].status, commonTask.status);
+        assertEquals(tasks[0].description, commonTask.description);
+
+        EpicTask epicTask = (EpicTask) tasks[2].clone();
+        tm.createEpic((epicTask));
+        assertNotEquals(tasks[2].id, epicTask.id);
+        assertEquals(tasks[2].name, epicTask.name);
+        assertEquals(tasks[2].status, epicTask.status);
+        assertEquals(tasks[2].description, epicTask.description);
+        assertEquals(((EpicTask)tasks[2]).getSubtasksIDs(), epicTask.getSubtasksIDs());
+
+        SubTask subTask = (SubTask) tasks[4].clone();
+        tm.createSubTask(subTask);
+        assertNotEquals(tasks[4].id, subTask.id);
+        assertEquals(tasks[4].name, subTask.name);
+        assertEquals(tasks[4].status, subTask.status);
+        assertEquals(tasks[4].description, subTask.description);
+        assertEquals(((SubTask)tasks[4]).getParentId(), subTask.getParentId());
+
     }
 
     @Test
@@ -264,6 +285,19 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void updateSubTaskShouldRaiseExceptionOnWrongParentId() {
+        setUpFullStand();
+
+        SubTask subTask = tm.getSubtaskById(6);
+        subTask.setParentId(1);
+        assertThrows(
+                NullPointerException.class,
+                () -> tm.updateSubTask(subTask)
+        );
+
+    }
+
+    @Test
     void updateEpicShouldUpdateStatusByProjectConditions() {
         setUpFullStand();
 
@@ -316,9 +350,6 @@ class InMemoryTaskManagerTest {
 
         setUpFullStand();
 
-        EpicTask firstEpic  = tm.getEpicById(3);
-        EpicTask secondEpic = tm.getEpicById(4);
-
         List<SubTask> ListSubtasksFirst  = tm.getTasksOfEpic(3);
         List<SubTask> ListSubtasksSecond = tm.getTasksOfEpic(4);
 
@@ -333,4 +364,83 @@ class InMemoryTaskManagerTest {
 
     }
 
+    @Test
+    void getHistoryShouldReturnEmptyList() {
+        setUpFullStand();
+
+        assertTrue(tm.getHistory().isEmpty());
+    }
+
+    @Test
+    void getHistoryShouldReturn1CommonTaskAnd1EpicTaskAnd1Subtask() {
+        setUpFullStand();
+
+        tm.getTaskById(1);
+        tm.getEpicById(3);
+        tm.getSubtaskById(6);
+        //tm.getHistory().forEach(System.out::println);
+        List<Task> tasks = tm.getHistory();
+        assertEquals(3, tasks.size());
+        assertInstanceOf(Task.class, tasks.get(0));
+        assertInstanceOf(EpicTask.class, tasks.get(1));
+        assertInstanceOf(SubTask.class, tasks.get(2));
+
+    }
+
+    @Test
+    void getHistoryShouldSaveOldVersionsOfTasks() {
+        setUpFullStand();
+
+        Task task = tm.getTaskById(1);
+        task.setStatus(Statuses.DONE);
+        task.setDescription("Test");
+        tm.updateTask(task);
+        tm.getTaskById(1);
+        //tm.getHistory().forEach(System.out::println);
+        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertNotEquals(
+                tm.getHistory().get(0).getStatus(),
+                tm.getHistory().get(1).getStatus()
+        );
+
+
+    }
+
+    @Test
+    void getHistoryShouldCorrectlyShowSubtasksInEpics() {
+        setUpFullStand();
+
+        EpicTask epicTask = tm.getEpicById(3);
+        tm.deleteSubtaskById(epicTask.getSubtasksIDs()
+                                     .stream()
+                                     .findFirst()
+                                     .orElse(0));
+
+        tm.updateEpic(epicTask);
+        tm.getEpicById(3);
+        //tm.getHistory().forEach(System.out::println);
+        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertNotEquals(
+                ((EpicTask) tm.getHistory().get(0)).getSubtasksIDs(),
+                ((EpicTask) tm.getHistory().get(1)).getSubtasksIDs()
+        );
+
+
+    }
+
+    @Test
+    void getHistoryShouldCorrectlyShowOldSubtaskParentId() {
+        setUpFullStand();
+
+        SubTask subTask = tm.getSubtaskById(6);
+        subTask.setParentId(4);
+        SubTask subtaskNew = tm.getSubtaskById(6);
+        //tm.getHistory().forEach(System.out::println);
+        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertNotEquals(
+                ((SubTask) tm.getHistory().get(0)).getParentId(),
+                ((SubTask) tm.getHistory().get(1)).getParentId()
+        );
+
+    }
 }

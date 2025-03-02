@@ -9,6 +9,16 @@ public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, EpicTask> epicMap    = new HashMap<>();
     private Map<Integer, SubTask>  subTaskMap = new HashMap<>();
 
+    private HistoryManager historyManager;
+
+    public InMemoryTaskManager() {
+        historyManager = Managers.getDefaultHistory();
+    }
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
+
 
     @Override
     public Task createTask(Task task) {
@@ -23,6 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
+    @Override
     public EpicTask createEpic(EpicTask task) {
 
         if (task.getId() == 0) {
@@ -34,6 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    @Override
     public SubTask createSubTask(SubTask task) {
 
         if (task.getId() == 0) {
@@ -45,22 +57,27 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    @Override
     public List<Task> getAllTask() {
         return taskMap.values().stream().toList();
     }
 
+    @Override
     public List<EpicTask> getAllEpic() {
         return epicMap.values().stream().toList();
     }
 
+    @Override
     public List<SubTask> getAllSubtask() {
         return subTaskMap.values().stream().toList();
     }
 
+    @Override
     public void deleteAllTask() {
         this.taskMap.clear();
     }
 
+    @Override
     public void deleteAllEpic() {
         Set<Integer> copyIDSet = new HashSet<>(epicMap.keySet());
         for (Integer id : copyIDSet) {
@@ -68,6 +85,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public void deleteAllSubtask() {
         Set<Integer> copyIDSet = new HashSet<>(subTaskMap.keySet());
         for (Integer id : copyIDSet) {
@@ -75,46 +93,57 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+
     @Override
     public Task getTaskById(int id) {
-        return this.taskMap.get(id);
+        Task task = this.taskMap.get(id);
+        historyManager.add(task);
+        return task;
     }
 
+    @Override
     public EpicTask getEpicById(int id) {
-        return this.epicMap.get(id);
+        EpicTask epicTask = this.epicMap.get(id);
+        historyManager.add(epicTask);
+        return epicTask;
     }
 
+    @Override
     public SubTask getSubtaskById(int id) {
-        return this.subTaskMap.get(id);
+        SubTask subTask = this.subTaskMap.get(id);
+        historyManager.add(subTask);
+        return subTask;
     }
+
 
     @Override
     public Task updateTask(Task task) {
-        Task oldTask = getTaskById(task.getId());
+        Task oldTask = getTaskByIdInternal(task.getId());
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
         oldTask.setStatus(task.getStatus());
         return oldTask;
     }
 
+    @Override
     public SubTask updateSubTask(SubTask task) {
 
         int     id      = task.getId();
-        SubTask oldTask = getSubtaskById(id);
+        SubTask oldTask = getSubtaskByIdInternal(id);
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
 
         int oldParentId = oldTask.getParentId();
 
         if (oldParentId != 0) {
-            getEpicById(oldParentId).removeSubtask(id);
+            getEpicByIdInternal(oldParentId).removeSubtask(id);
             checkStatusOfEpic(oldParentId);
         }
 
         int newParentId = task.getParentId();
         oldTask.setParentId(newParentId);
 
-        getEpicById(newParentId).addNewSubtask(id);
+        getEpicByIdInternal(newParentId).addNewSubtask(id);
 
         oldTask.setStatus(task.getStatus());
 
@@ -123,8 +152,9 @@ public class InMemoryTaskManager implements TaskManager {
         return oldTask;
     }
 
+    @Override
     public EpicTask updateEpic(EpicTask task) {
-        EpicTask oldTask = getEpicById(task.getId());
+        EpicTask oldTask = getEpicByIdInternal(task.getId());
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
         oldTask.setSubtasksId(task.getSubtasksIDs());
@@ -138,6 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
         return this.taskMap.remove(id);
     }
 
+    @Override
     public EpicTask deleteEpicById(int id) {
         EpicTask epic = this.epicMap.get(id);
         if (epic != null) {
@@ -150,22 +181,20 @@ public class InMemoryTaskManager implements TaskManager {
         return this.epicMap.remove(id);
     }
 
+    @Override
     public SubTask deleteSubtaskById(int id) {
         SubTask subTask = subTaskMap.remove(id);
 
         if (subTask != null) {
             int parentId = subTask.getParentId();
-            getEpicById(parentId).removeSubtask(id);
+            getEpicByIdInternal(parentId).removeSubtask(id);
             checkStatusOfEpic(parentId);
         }
 
         return subTask;
     }
 
-    private int generateId() {
-        return ++this.lastID;
-    }
-
+    @Override
     public List<SubTask> getTasksOfEpic(int id) {
 
         EpicTask epicTask = epicMap.getOrDefault(id, new EpicTask(""));
@@ -181,12 +210,17 @@ public class InMemoryTaskManager implements TaskManager {
                          .toList();
     }
 
+    @Override
     public List<Task> getHistory() {
-        return null;
+        return this.historyManager.getHistory();
+    }
+
+    private int generateId() {
+        return ++this.lastID;
     }
 
     private void checkStatusOfEpic(int id) {
-        EpicTask epic = getEpicById(id);
+        EpicTask epic = getEpicByIdInternal(id);
         if (epic == null) return;
 
         List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
@@ -200,13 +234,23 @@ public class InMemoryTaskManager implements TaskManager {
         if (distinctStatuses.size() > 1) {
             newStatus = Statuses.IN_PROGRESS;
         } else {
-            newStatus = distinctStatuses.stream()
-                                        .findFirst()
-                                        .orElse(Statuses.NEW);
+            newStatus =
+                    distinctStatuses.stream().findFirst().orElse(Statuses.NEW);
         }
         epic.setStatus(newStatus);
 
     }
 
+    private Task getTaskByIdInternal(int id) {
+        return this.taskMap.get(id);
+    }
+
+    private EpicTask getEpicByIdInternal(int id) {
+        return this.epicMap.get(id);
+    }
+
+    private SubTask getSubtaskByIdInternal(int id) {
+        return this.subTaskMap.get(id);
+    }
 
 }

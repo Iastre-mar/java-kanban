@@ -7,12 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskQueueTest {
-    TaskQueue tq;
+class InMemoryHistoryManagerTest {
+    HistoryManager tq;
 
     @BeforeEach
     void setUp() {
-        tq = new TaskQueue(10);
+        tq = new InMemoryHistoryManager(10);
 
         Task     firstCommonTask  = new Task("Первая");
         Task     secondCommonTask = new Task("Вторая", "Описание второй");
@@ -32,7 +32,7 @@ public class TaskQueueTest {
                 "Принадлежит второму Эпику"
         );
 
-        tq.put(
+        ((InMemoryHistoryManager) tq).put(
                 firstCommonTask,
                 secondCommonTask,
                 firstEpicTask,
@@ -44,8 +44,8 @@ public class TaskQueueTest {
     }
 
     @Test
-    void getTasksShouldReturnListWithTasks() {
-        var list = tq.getTasks();
+    void getTasksShouldReturnListWithHistory() {
+        var list = tq.getHistory();
         assertInstanceOf(List.class, list);
         var task = list.get(list.size() - 1);
         assertInstanceOf(Task.class, task);
@@ -53,45 +53,53 @@ public class TaskQueueTest {
 
     @Test
     void getCapacityShouldReturn10() {
-        assertEquals(10, tq.getCapacity());
+        assertEquals(10, ((InMemoryHistoryManager) tq).getCapacity());
     }
 
     @Test
-    void putShouldAddItem() {
-        int initialSize = tq.getTasks().size(); // 7
-        tq.put(new Task("testAdd"));
-        int sizeAfter = tq.getTasks().size(); // 8
+    void addShouldAddItem() {
+        int initialSize = tq.getHistory().size(); // 7
+        tq.add(new Task("testAdd"));
+        int sizeAfter = tq.getHistory().size(); // 8
         assertEquals(initialSize + 1, sizeAfter);
-        assertEquals("testAdd", tq.getTasks().get(sizeAfter - 1).getName());
+        assertEquals("testAdd", tq.getHistory().get(sizeAfter - 1).getName());
     }
 
     @Test
-    void putShouldGrowQueueUntilCapacity10() {
-        int initialSize = tq.getTasks().size(); // 7
-        tq.put(new Task("8th"));
-        tq.put(new Task("9th"));
-        tq.put(new Task("10th"));
-        tq.put(new Task("11th"));
-        int sizeAfter = tq.getTasks().size(); // 10
+    void addShouldGrowQueueUntilCapacity10() {
+        int initialSize = tq.getHistory().size(); // 7
+        tq.add(new Task("8th"));
+        tq.add(new Task("9th"));
+        tq.add(new Task("10th"));
+        tq.add(new Task("11th"));
+        int sizeAfter = tq.getHistory().size(); // 10
         assertEquals(initialSize + 3, sizeAfter);
     }
 
     @Test
     void shouldImitateQueue() {
-        int initialSize = tq.getTasks().size(); // 7
-        tq.put(new Task("8th")); // first elem after put ten times
-        tq.put(new Task("9th"));
-        tq.put(new Task("10th"));
-        tq.put(new Task("11th"));
-        tq.put(new Task("12th"));
-        tq.put(new Task("13th"));
-        tq.put(new Task("14th"));
-        tq.put(new Task("15th"));
-        tq.put(new Task("16th"));
-        tq.put(new Task("17th"));
-        int sizeAfter = tq.getTasks().size(); // 10
+        int initialSize = tq.getHistory().size(); // 7
+        tq.add(new Task("8th")); // first elem after put ten times
+        tq.add(new Task("9th"));
+        tq.add(new Task("10th"));
+        tq.add(new Task("11th"));
+        tq.add(new Task("12th"));
+        tq.add(new Task("13th"));
+        tq.add(new Task("14th"));
+        tq.add(new Task("15th"));
+        tq.add(new Task("16th"));
+        tq.add(new Task("17th"));
+        int sizeAfter = tq.getHistory().size(); // 10
         assertEquals(initialSize + 3, sizeAfter);
-        assertEquals("8th", tq.getTasks().getFirst().getName());
+        assertEquals("8th", tq.getHistory().getFirst().getName());
     }
 
+    @Test
+    void getCapacityOfDefaultshouldBe10andNonDefaultAssigned() {
+        InMemoryHistoryManager tqDefault = new InMemoryHistoryManager();
+        assertEquals(10, tqDefault.getCapacity());
+
+        InMemoryHistoryManager tq20 = new InMemoryHistoryManager(20);
+        assertEquals(20, tq20.getCapacity());
+    }
 }

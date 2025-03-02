@@ -3,20 +3,20 @@ package ru.yandex.practicum.cva.task.tracker;
 import java.util.Objects;
 
 
-public class Task {
-    protected int       id;
-    protected String    name;
-    protected String    description;
-    protected Statuses  status;
+public class Task implements Cloneable {
+    protected int      id;
+    protected String   name;
+    protected String   description;
+    protected Statuses status;
 
     public Task(String name, String description) {
         this.name        = name;
         this.description = description;
-        this.status = Statuses.NEW;
+        this.status      = Statuses.NEW;
     }
 
     public Task(String name) {
-        this.name = name;
+        this.name   = name;
         this.status = Statuses.NEW;
     }
 
@@ -24,7 +24,7 @@ public class Task {
         return this.status;
     }
 
-    public void setStatus(Statuses status){
+    public void setStatus(Statuses status) {
         this.status = status;
     }
 
@@ -78,5 +78,15 @@ public class Task {
                ", status=" +
                status +
                '}';
+    }
+
+    @Override
+    public Task clone() {
+        try {
+            Task clone = (Task) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

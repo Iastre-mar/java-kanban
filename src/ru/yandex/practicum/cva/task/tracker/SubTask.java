@@ -1,7 +1,7 @@
 package ru.yandex.practicum.cva.task.tracker;
 
 
-public class SubTask extends Task{
+public class SubTask extends Task {
     private int parentId;
 
     public SubTask(String name, String description) {
@@ -13,7 +13,9 @@ public class SubTask extends Task{
     }
 
     public void setParentId(int parentId) {
-        this.parentId = parentId;
+        if (parentId != this.parentId) {
+            this.parentId = parentId;
+        }
     }
 
     public int getParentId() {

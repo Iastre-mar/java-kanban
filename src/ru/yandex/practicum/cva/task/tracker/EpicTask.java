@@ -33,11 +33,20 @@ public class EpicTask extends Task {
                '}';
     }
 
-    public void addNewSubtask(int id){
-        this.setOfSubtasksID.add(id);
+    @Override
+    public EpicTask clone() {
+        EpicTask newEpic = (EpicTask) super.clone();
+        newEpic.setOfSubtasksID = new HashSet<>(this.getSubtasksIDs());
+        return newEpic;
     }
 
-    public boolean removeSubtask(int id){
+    public void addNewSubtask(int id) {
+        if (id != this.id) {
+            this.setOfSubtasksID.add(id);
+        }
+    }
+
+    public boolean removeSubtask(int id) {
         return this.setOfSubtasksID.remove(id);
     }
 
@@ -45,7 +54,7 @@ public class EpicTask extends Task {
         return this.setOfSubtasksID;
     }
 
-    public void setSubtasksId(Set<Integer> subtasksId){
+    public void setSubtasksId(Set<Integer> subtasksId) {
         this.setOfSubtasksID = subtasksId;
     }
 
