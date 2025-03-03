@@ -13,7 +13,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        tm = new InMemoryTaskManager(new InMemoryHistoryManager());
+        tm = new InMemoryTaskManager();
 
         Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
