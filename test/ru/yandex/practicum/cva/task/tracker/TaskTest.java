@@ -8,7 +8,7 @@ class TaskTest {
 
     @Test
     void testEquals() {
-        Task firstCommonTask  = new Task("Первая");
+        Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
         firstCommonTask.setId(1);
         secondCommonTask.setId(2);
@@ -21,7 +21,7 @@ class TaskTest {
 
     @Test
     void testToString() {
-        Task firstCommonTask  = new Task("Первая");
+        Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
         secondCommonTask.setId(1);
         secondCommonTask.setStatus(Statuses.DONE);
@@ -33,7 +33,7 @@ class TaskTest {
         );
         assertEquals(
                 "Task{id=1, name='Вторая', description='Описание второй " +
-                "Тест', status=DONE}",
+                        "Тест', status=DONE}",
                 secondCommonTask.toString()
         );
     }
@@ -41,7 +41,7 @@ class TaskTest {
     @Test
     void testClone() {
         Task firstCommonTask = new Task("Первая");
-        Task copy            = firstCommonTask.clone();
+        Task copy = firstCommonTask.clone();
         assertEquals(firstCommonTask, copy);
         assertNotSame(firstCommonTask, copy);
     }

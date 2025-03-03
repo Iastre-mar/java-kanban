@@ -1,7 +1,7 @@
 package ru.yandex.practicum.cva.task.tracker;
 
 public class Managers {
-    private static TaskManager    defaultTaskManager;
+    private static TaskManager defaultTaskManager;
     private static HistoryManager defaultHistoryManager;
 
     private Managers() {

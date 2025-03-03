@@ -4,10 +4,10 @@ import java.util.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    private int                    lastID     = 0;
-    private Map<Integer, Task>     taskMap    = new HashMap<>();
-    private Map<Integer, EpicTask> epicMap    = new HashMap<>();
-    private Map<Integer, SubTask>  subTaskMap = new HashMap<>();
+    private int lastID = 0;
+    private Map<Integer, Task> taskMap = new HashMap<>();
+    private Map<Integer, EpicTask> epicMap = new HashMap<>();
+    private Map<Integer, SubTask> subTaskMap = new HashMap<>();
 
     private HistoryManager historyManager;
 
@@ -128,7 +128,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask updateSubTask(SubTask task) {
 
-        int     id      = task.getId();
+        int id = task.getId();
         SubTask oldTask = getSubtaskByIdInternal(id);
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
@@ -204,10 +204,10 @@ public class InMemoryTaskManager implements TaskManager {
 
 
         return subTaskMap.entrySet()
-                         .stream()
-                         .filter(entry -> ids.contains(entry.getKey()))
-                         .map(Map.Entry::getValue)
-                         .toList();
+                .stream()
+                .filter(entry -> ids.contains(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .toList();
     }
 
     @Override
@@ -224,12 +224,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) return;
 
         List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
-        Statuses      newStatus;
+        Statuses newStatus;
 
         List<Statuses> distinctStatuses = subTasksOfEpic.stream()
-                                                        .map(SubTask::getStatus)
-                                                        .distinct()
-                                                        .toList();
+                .map(SubTask::getStatus)
+                .distinct()
+                .toList();
 
         if (distinctStatuses.size() > 1) {
             newStatus = Statuses.IN_PROGRESS;

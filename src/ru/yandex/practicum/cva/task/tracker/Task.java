@@ -4,19 +4,19 @@ import java.util.Objects;
 
 
 public class Task implements Cloneable {
-    protected int      id;
-    protected String   name;
-    protected String   description;
+    protected int id;
+    protected String name;
+    protected String description;
     protected Statuses status;
 
     public Task(String name, String description) {
-        this.name        = name;
+        this.name = name;
         this.description = description;
-        this.status      = Statuses.NEW;
+        this.status = Statuses.NEW;
     }
 
     public Task(String name) {
-        this.name   = name;
+        this.name = name;
         this.status = Statuses.NEW;
     }
 
@@ -67,17 +67,17 @@ public class Task implements Cloneable {
     @Override
     public String toString() {
         return "Task{" +
-               "id=" +
-               id +
-               ", name='" +
-               name +
-               '\'' +
-               ", description='" +
-               description +
-               '\'' +
-               ", status=" +
-               status +
-               '}';
+                "id=" +
+                id +
+                ", name='" +
+                name +
+                '\'' +
+                ", description='" +
+                description +
+                '\'' +
+                ", status=" +
+                status +
+                '}';
     }
 
     @Override

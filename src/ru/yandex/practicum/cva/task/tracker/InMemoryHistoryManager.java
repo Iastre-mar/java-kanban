@@ -4,18 +4,18 @@ package ru.yandex.practicum.cva.task.tracker;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private int         capacity;
+    private int capacity;
     private Deque<Task> tasks;
 
     public InMemoryHistoryManager(int capacity) {
         this.capacity = capacity;
-        this.tasks    = new ArrayDeque<>(this.capacity);
+        this.tasks = new ArrayDeque<>(this.capacity);
 
     }
 
     public InMemoryHistoryManager() {
         this.capacity = 10;
-        this.tasks    = new ArrayDeque<>(10);
+        this.tasks = new ArrayDeque<>(10);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     for test purposes only
+     * for test purposes only
      */
     void put(Task... tasks) {
         for (Task task : tasks) {

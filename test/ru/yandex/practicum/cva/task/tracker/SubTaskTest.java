@@ -8,7 +8,7 @@ class SubTaskTest {
 
     @Test
     void testEquals() {
-        SubTask firstSubTask  = new SubTask("Первая подзадача");
+        SubTask firstSubTask = new SubTask("Первая подзадача");
         SubTask secondSubTask = new SubTask(
                 "Вторая подзадача",
                 "Принадлежит первому Эпику"
@@ -26,7 +26,7 @@ class SubTaskTest {
 
     @Test
     void setParentId() {
-        SubTask firstSubTask  = new SubTask("Первая подзадача");
+        SubTask firstSubTask = new SubTask("Первая подзадача");
 
         firstSubTask.setId(2);
         firstSubTask.setParentId(1);

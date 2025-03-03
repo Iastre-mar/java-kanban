@@ -14,20 +14,20 @@ class InMemoryHistoryManagerTest {
     void setUp() {
         tq = new InMemoryHistoryManager(10);
 
-        Task     firstCommonTask  = new Task("Первая");
-        Task     secondCommonTask = new Task("Вторая", "Описание второй");
-        EpicTask firstEpicTask    = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask   = new EpicTask(
+        Task firstCommonTask = new Task("Первая");
+        Task secondCommonTask = new Task("Вторая", "Описание второй");
+        EpicTask firstEpicTask = new EpicTask("Первый эпик");
+        EpicTask secondEpicTask = new EpicTask(
                 "Второй Эпик",
                 "Описание второго эпика"
         );
 
-        SubTask firstSubTask  = new SubTask("Первая подзадача");
+        SubTask firstSubTask = new SubTask("Первая подзадача");
         SubTask secondSubTask = new SubTask(
                 "Вторая подзадача",
                 "Принадлежит первому Эпику"
         );
-        SubTask thirdSubTask  = new SubTask(
+        SubTask thirdSubTask = new SubTask(
                 "Третья подзадача",
                 "Принадлежит второму Эпику"
         );

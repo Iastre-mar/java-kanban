@@ -9,15 +9,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     TaskManager tm;
-    Task[]      tasks;
+    Task[] tasks;
 
     @BeforeEach
     void setUp() {
         tm = new InMemoryTaskManager(new InMemoryHistoryManager());
 
-        Task     firstCommonTask  = new Task("Первая");
-        Task     secondCommonTask = new Task("Вторая", "Описание второй");
-        EpicTask firstEpicTask    = new EpicTask("Первый эпик");
+        Task firstCommonTask = new Task("Первая");
+        Task secondCommonTask = new Task("Вторая", "Описание второй");
+        EpicTask firstEpicTask = new EpicTask("Первый эпик");
         EpicTask secondEpicTask =
                 new EpicTask("Второй Эпик", "Описание второго эпика");
 
@@ -39,7 +39,7 @@ class InMemoryTaskManagerTest {
     }
 
     /**
-     Can be used after `create` tests
+     * Can be used after `create` tests
      */
     void setUpFullStand() {
         tm.createTask(tasks[0]);
@@ -122,7 +122,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void createMethodsShouldOnlyAssignIds(){
+    void createMethodsShouldOnlyAssignIds() {
         Task commonTask = tasks[0].clone();
         tm.createTask(commonTask);
         assertNotEquals(tasks[0].id, commonTask.id);
@@ -136,7 +136,7 @@ class InMemoryTaskManagerTest {
         assertEquals(tasks[2].name, epicTask.name);
         assertEquals(tasks[2].status, epicTask.status);
         assertEquals(tasks[2].description, epicTask.description);
-        assertEquals(((EpicTask)tasks[2]).getSubtasksIDs(), epicTask.getSubtasksIDs());
+        assertEquals(((EpicTask) tasks[2]).getSubtasksIDs(), epicTask.getSubtasksIDs());
 
         SubTask subTask = (SubTask) tasks[4].clone();
         tm.createSubTask(subTask);
@@ -144,7 +144,7 @@ class InMemoryTaskManagerTest {
         assertEquals(tasks[4].name, subTask.name);
         assertEquals(tasks[4].status, subTask.status);
         assertEquals(tasks[4].description, subTask.description);
-        assertEquals(((SubTask)tasks[4]).getParentId(), subTask.getParentId());
+        assertEquals(((SubTask) tasks[4]).getParentId(), subTask.getParentId());
 
     }
 
@@ -189,13 +189,13 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllEpicShouldDeleteAllEpicsAndSubtasks() {
         setUpFullStand();
-        List<EpicTask> list        = tm.getAllEpic();
-        List<SubTask>  listSubtask = tm.getAllSubtask();
+        List<EpicTask> list = tm.getAllEpic();
+        List<SubTask> listSubtask = tm.getAllSubtask();
 
         assertEquals(2, list.size());
         assertEquals(3, listSubtask.size());
         tm.deleteAllEpic();
-        list        = tm.getAllEpic();
+        list = tm.getAllEpic();
         listSubtask = tm.getAllSubtask();
         assertEquals(0, list.size());
         assertEquals(0, listSubtask.size());
@@ -205,13 +205,13 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllSubtaskShouldDeleteAllSubtasksOnly() {
         setUpFullStand();
-        List<EpicTask> list        = tm.getAllEpic();
-        List<SubTask>  listSubtask = tm.getAllSubtask();
+        List<EpicTask> list = tm.getAllEpic();
+        List<SubTask> listSubtask = tm.getAllSubtask();
 
         assertEquals(2, list.size());
         assertEquals(3, listSubtask.size());
         tm.deleteAllSubtask();
-        list        = tm.getAllEpic();
+        list = tm.getAllEpic();
         listSubtask = tm.getAllSubtask();
         assertEquals(2, list.size());
         assertEquals(0, listSubtask.size());
@@ -247,7 +247,7 @@ class InMemoryTaskManagerTest {
     @Test
     void updateTaskShouldUpdateStatusOnlyIfStatusChanged() {
         setUpFullStand();
-        Task     commonTask     = new Task("Третья");
+        Task commonTask = new Task("Третья");
         Statuses originalStatus = commonTask.getStatus(); //Shall be NEW
         tm.createTask(commonTask);
         commonTask.setDescription("Третья задача");
@@ -301,12 +301,12 @@ class InMemoryTaskManagerTest {
     void updateEpicShouldUpdateStatusByProjectConditions() {
         setUpFullStand();
 
-        EpicTask firstEpic  = tm.getEpicById(3);
+        EpicTask firstEpic = tm.getEpicById(3);
         EpicTask secondEpic = tm.getEpicById(4);
 
-        SubTask firstSubtask  = tm.getSubtaskById(5);
+        SubTask firstSubtask = tm.getSubtaskById(5);
         SubTask secondSubtask = tm.getSubtaskById(6);
-        SubTask thirdSubtask  = tm.getSubtaskById(7);
+        SubTask thirdSubtask = tm.getSubtaskById(7);
 
 
         assertEquals(Statuses.NEW, firstEpic.getStatus());
@@ -350,7 +350,7 @@ class InMemoryTaskManagerTest {
 
         setUpFullStand();
 
-        List<SubTask> ListSubtasksFirst  = tm.getTasksOfEpic(3);
+        List<SubTask> ListSubtasksFirst = tm.getTasksOfEpic(3);
         List<SubTask> ListSubtasksSecond = tm.getTasksOfEpic(4);
 
         for (SubTask st : ListSubtasksFirst) {
@@ -412,9 +412,9 @@ class InMemoryTaskManagerTest {
 
         EpicTask epicTask = tm.getEpicById(3);
         tm.deleteSubtaskById(epicTask.getSubtasksIDs()
-                                     .stream()
-                                     .findFirst()
-                                     .orElse(0));
+                .stream()
+                .findFirst()
+                .orElse(0));
 
         tm.updateEpic(epicTask);
         tm.getEpicById(3);
