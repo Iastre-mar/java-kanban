@@ -12,7 +12,7 @@ class InMemoryHistoryManagerTest {
 
     @BeforeEach
     void setUp() {
-        tq = new InMemoryHistoryManager(10);
+        tq = new InMemoryHistoryManager();
 
         Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
@@ -32,29 +32,23 @@ class InMemoryHistoryManagerTest {
                 "Принадлежит второму Эпику"
         );
 
-        ((InMemoryHistoryManager) tq).put(
-                firstCommonTask,
-                secondCommonTask,
-                firstEpicTask,
-                secondEpicTask,
-                firstSubTask,
-                secondSubTask,
-                thirdSubTask
-        );
+        tq.add(firstCommonTask);
+        tq.add(secondCommonTask);
+        tq.add(firstEpicTask);
+        tq.add(secondEpicTask);
+        tq.add(firstSubTask);
+        tq.add(secondSubTask);
+        tq.add(thirdSubTask);
     }
 
     @Test
     void getTasksShouldReturnListWithHistory() {
         var list = tq.getHistory();
         assertInstanceOf(List.class, list);
-        var task = list.get(list.size() - 1);
+        var task = list.getLast();
         assertInstanceOf(Task.class, task);
     }
 
-    @Test
-    void getCapacityShouldReturn10() {
-        assertEquals(10, ((InMemoryHistoryManager) tq).getCapacity());
-    }
 
     @Test
     void addShouldAddItem() {
@@ -94,12 +88,5 @@ class InMemoryHistoryManagerTest {
         assertEquals("8th", tq.getHistory().getFirst().getName());
     }
 
-    @Test
-    void getCapacityOfDefaultshouldBe10andNonDefaultAssigned() {
-        InMemoryHistoryManager tqDefault = new InMemoryHistoryManager();
-        assertEquals(10, tqDefault.getCapacity());
 
-        InMemoryHistoryManager tq20 = new InMemoryHistoryManager(20);
-        assertEquals(20, tq20.getCapacity());
-    }
 }
