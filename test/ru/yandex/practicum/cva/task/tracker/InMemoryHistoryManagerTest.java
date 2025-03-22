@@ -17,20 +17,14 @@ class InMemoryHistoryManagerTest {
         Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
         EpicTask firstEpicTask = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask = new EpicTask(
-                "Второй Эпик",
-                "Описание второго эпика"
-        );
+        EpicTask secondEpicTask = new EpicTask("Второй Эпик",
+                                               "Описание второго эпика");
 
         SubTask firstSubTask = new SubTask("Первая подзадача");
-        SubTask secondSubTask = new SubTask(
-                "Вторая подзадача",
-                "Принадлежит первому Эпику"
-        );
-        SubTask thirdSubTask = new SubTask(
-                "Третья подзадача",
-                "Принадлежит второму Эпику"
-        );
+        SubTask secondSubTask = new SubTask("Вторая подзадача",
+                                            "Принадлежит первому Эпику");
+        SubTask thirdSubTask = new SubTask("Третья подзадача",
+                                           "Принадлежит второму Эпику");
 
         firstCommonTask.setId(1);
         secondCommonTask.setId(2);
@@ -60,11 +54,56 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addShouldAddItem() {
-        int initialSize = tq.getHistory().size(); // 7
+        int initialSize = tq.getHistory()
+                            .size(); // 7
         tq.add(new Task("testAdd"));
-        int sizeAfter = tq.getHistory().size(); // 8
+        int sizeAfter = tq.getHistory()
+                          .size(); // 8
         assertEquals(initialSize + 1, sizeAfter);
-        assertEquals("testAdd", tq.getHistory().get(sizeAfter - 1).getName());
+        assertEquals("testAdd", tq.getHistory()
+                                  .get(sizeAfter - 1)
+                                  .getName());
+    }
+
+    @Test
+    void removeShallDeleteExistingTaskAndChangeSize() {
+        int oldSize = tq.getHistory().size();
+        Task taskWithId1 = tq.getHistory()
+                      .stream()
+                      .filter(task -> task.getId() == 1)
+                      .findFirst()
+                      .orElse(null);
+        assertNotNull(taskWithId1);
+        tq.remove(1);
+        taskWithId1 = tq.getHistory()
+                        .stream()
+                        .filter(task -> task.getId() == 1)
+                        .findFirst()
+                        .orElse(null);
+        assertNull(taskWithId1);
+        assertEquals(Integer.valueOf(oldSize), tq.getHistory().size() + 1);
+    }
+
+    @Test
+    void removeNotExistingTaskShallDoNothing(){
+        int oldSize = tq.getHistory().size();
+        Task taskWithId1 = tq.getHistory()
+                             .stream()
+                             .filter(task -> task.getId() == 1)
+                             .findFirst()
+                             .orElse(null);
+        assertNotNull(taskWithId1);
+        tq.remove(-99);
+        tq.remove(0);
+        tq.remove(1000);
+        taskWithId1 = tq.getHistory()
+                        .stream()
+                        .filter(task -> task.getId() == 1)
+                        .findFirst()
+                        .orElse(null);
+        assertNotNull(taskWithId1);
+        assertEquals(Integer.valueOf(oldSize), tq.getHistory().size() );
+
     }
 
 
