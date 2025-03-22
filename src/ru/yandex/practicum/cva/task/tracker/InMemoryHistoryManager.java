@@ -18,7 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (task != null){
+        if (task != null) {
             tasks.add(task.clone());
         }
 
@@ -77,10 +77,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         @Override
         public boolean remove(Object o) {
             int oldSize = size();
-            if (!(o instanceof Task)) {
+            if (!(o instanceof Task task)) {
                 throw new IllegalArgumentException();
             }
-            Task task = (Task) o;
 
             int taskId = task.getId();
 

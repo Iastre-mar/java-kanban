@@ -1,9 +1,9 @@
 package ru.yandex.practicum.cva.task.tracker;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,12 +67,13 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void removeShallDeleteExistingTaskAndChangeSize() {
-        int oldSize = tq.getHistory().size();
+        int oldSize = tq.getHistory()
+                        .size();
         Task taskWithId1 = tq.getHistory()
-                      .stream()
-                      .filter(task -> task.getId() == 1)
-                      .findFirst()
-                      .orElse(null);
+                             .stream()
+                             .filter(task -> task.getId() == 1)
+                             .findFirst()
+                             .orElse(null);
         assertNotNull(taskWithId1);
         tq.remove(1);
         taskWithId1 = tq.getHistory()
@@ -81,12 +82,14 @@ class InMemoryHistoryManagerTest {
                         .findFirst()
                         .orElse(null);
         assertNull(taskWithId1);
-        assertEquals(Integer.valueOf(oldSize), tq.getHistory().size() + 1);
+        assertEquals(Integer.valueOf(oldSize), tq.getHistory()
+                                                 .size() + 1);
     }
 
     @Test
-    void removeNotExistingTaskShallDoNothing(){
-        int oldSize = tq.getHistory().size();
+    void removeNotExistingTaskShallDoNothing() {
+        int oldSize = tq.getHistory()
+                        .size();
         Task taskWithId1 = tq.getHistory()
                              .stream()
                              .filter(task -> task.getId() == 1)
@@ -102,7 +105,8 @@ class InMemoryHistoryManagerTest {
                         .findFirst()
                         .orElse(null);
         assertNotNull(taskWithId1);
-        assertEquals(Integer.valueOf(oldSize), tq.getHistory().size() );
+        assertEquals(Integer.valueOf(oldSize), tq.getHistory()
+                                                 .size());
 
     }
 

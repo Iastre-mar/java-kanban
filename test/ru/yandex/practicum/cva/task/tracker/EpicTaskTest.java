@@ -2,9 +2,8 @@ package ru.yandex.practicum.cva.task.tracker;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class EpicTaskTest {
 
@@ -14,8 +13,8 @@ class EpicTaskTest {
         firstEpicTask.setId(1);
 
         SubTask firstSubTask = new SubTask("Первая подзадача");
-        SubTask secondSubTask =
-                new SubTask("Вторая подзадача", "Принадлежит первому Эпику");
+        SubTask secondSubTask = new SubTask("Вторая подзадача",
+                                            "Принадлежит первому Эпику");
 
         firstSubTask.setId(2);
         secondSubTask.setId(3);
@@ -23,14 +22,17 @@ class EpicTaskTest {
         firstEpicTask.addNewSubtask(2);
         firstEpicTask.addNewSubtask(3);
 
-        assertEquals(2, firstEpicTask.getSubtasksIDs().size());
+        assertEquals(2, firstEpicTask.getSubtasksIDs()
+                                     .size());
 
         EpicTask firstEpicTaskCopy = firstEpicTask.clone();
 
         firstEpicTask.removeSubtask(2);
-        assertEquals(1, firstEpicTask.getSubtasksIDs().size());
+        assertEquals(1, firstEpicTask.getSubtasksIDs()
+                                     .size());
 
-        assertEquals(2, firstEpicTaskCopy.getSubtasksIDs().size());
+        assertEquals(2, firstEpicTaskCopy.getSubtasksIDs()
+                                         .size());
 
 
     }
@@ -38,8 +40,8 @@ class EpicTaskTest {
     @Test
     void epicEquals() {
         EpicTask firstEpicTask = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask =
-                new EpicTask("Второй Эпик", "Описание второго эпика");
+        EpicTask secondEpicTask = new EpicTask("Второй Эпик",
+                                               "Описание второго эпика");
 
         firstEpicTask.setId(1);
         secondEpicTask.setId(2);
@@ -54,15 +56,18 @@ class EpicTaskTest {
         EpicTask firstEpicTask = new EpicTask("Первый эпик");
         firstEpicTask.setId(1);
 
-        assertEquals(0, firstEpicTask.getSubtasksIDs().size());
+        assertEquals(0, firstEpicTask.getSubtasksIDs()
+                                     .size());
 
         firstEpicTask.addNewSubtask(2);
         firstEpicTask.addNewSubtask(3);
 
-        assertEquals(2, firstEpicTask.getSubtasksIDs().size());
+        assertEquals(2, firstEpicTask.getSubtasksIDs()
+                                     .size());
 
         firstEpicTask.addNewSubtask(1);
 
-        assertEquals(2, firstEpicTask.getSubtasksIDs().size());
+        assertEquals(2, firstEpicTask.getSubtasksIDs()
+                                     .size());
     }
 }

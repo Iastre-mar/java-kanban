@@ -18,14 +18,14 @@ class InMemoryTaskManagerTest {
         Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
         EpicTask firstEpicTask = new EpicTask("Первый эпик");
-        EpicTask secondEpicTask =
-                new EpicTask("Второй Эпик", "Описание второго эпика");
+        EpicTask secondEpicTask = new EpicTask("Второй Эпик",
+                                               "Описание второго эпика");
 
         SubTask firstSubTask = new SubTask("Первая подзадача");
-        SubTask secondSubTask =
-                new SubTask("Вторая подзадача", "Принадлежит первому Эпику");
-        SubTask thirdSubTask =
-                new SubTask("Третья подзадача", "Принадлежит второму Эпику");
+        SubTask secondSubTask = new SubTask("Вторая подзадача",
+                                            "Принадлежит первому Эпику");
+        SubTask thirdSubTask = new SubTask("Третья подзадача",
+                                           "Принадлежит второму Эпику");
 
         tasks = new Task[]{
                 firstCommonTask,
@@ -72,10 +72,8 @@ class InMemoryTaskManagerTest {
         Task commonTask = tasks[0];
         assertEquals(Integer.valueOf(0), Integer.valueOf(commonTask.getId()));
         tm.createTask(commonTask);
-        assertNotEquals(
-                Integer.valueOf(0),
-                Integer.valueOf(commonTask.getId())
-        );
+        assertNotEquals(Integer.valueOf(0),
+                        Integer.valueOf(commonTask.getId()));
     }
 
     @Test
@@ -136,7 +134,8 @@ class InMemoryTaskManagerTest {
         assertEquals(tasks[2].name, epicTask.name);
         assertEquals(tasks[2].status, epicTask.status);
         assertEquals(tasks[2].description, epicTask.description);
-        assertEquals(((EpicTask) tasks[2]).getSubtasksIDs(), epicTask.getSubtasksIDs());
+        assertEquals(((EpicTask) tasks[2]).getSubtasksIDs(),
+                     epicTask.getSubtasksIDs());
 
         SubTask subTask = (SubTask) tasks[4].clone();
         tm.createSubTask(subTask);
@@ -144,7 +143,8 @@ class InMemoryTaskManagerTest {
         assertEquals(tasks[4].name, subTask.name);
         assertEquals(tasks[4].status, subTask.status);
         assertEquals(tasks[4].description, subTask.description);
-        assertEquals(((SubTask) tasks[4]).getParentId(), subTask.getParentId());
+        assertEquals(((SubTask) tasks[4]).getParentId(),
+                     subTask.getParentId());
 
     }
 
@@ -153,8 +153,10 @@ class InMemoryTaskManagerTest {
         setUpFullStand();
         List<Task> list = tm.getAllTask();
         assertEquals(2, list.size());
-        assertEquals("Первая", list.get(0).getName());
-        assertEquals("Вторая", list.get(1).getName());
+        assertEquals("Первая", list.get(0)
+                                   .getName());
+        assertEquals("Вторая", list.get(1)
+                                   .getName());
     }
 
     @Test
@@ -162,8 +164,10 @@ class InMemoryTaskManagerTest {
         setUpFullStand();
         List<EpicTask> list = tm.getAllEpic();
         assertEquals(2, list.size());
-        assertEquals("Первый эпик", list.get(0).getName());
-        assertEquals("Второй Эпик", list.get(1).getName());
+        assertEquals("Первый эпик", list.get(0)
+                                        .getName());
+        assertEquals("Второй Эпик", list.get(1)
+                                        .getName());
     }
 
     @Test
@@ -171,9 +175,12 @@ class InMemoryTaskManagerTest {
         setUpFullStand();
         List<SubTask> list = tm.getAllSubtask();
         assertEquals(3, list.size());
-        assertEquals("Первая подзадача", list.get(0).getName());
-        assertEquals("Вторая подзадача", list.get(1).getName());
-        assertEquals("Третья подзадача", list.get(2).getName());
+        assertEquals("Первая подзадача", list.get(0)
+                                             .getName());
+        assertEquals("Вторая подзадача", list.get(1)
+                                             .getName());
+        assertEquals("Третья подзадача", list.get(2)
+                                             .getName());
     }
 
     @Test
@@ -252,16 +259,12 @@ class InMemoryTaskManagerTest {
         tm.createTask(commonTask);
         commonTask.setDescription("Третья задача");
         tm.updateTask(commonTask);
-        assertEquals(
-                originalStatus,
-                tm.getTaskById(commonTask.getId()).getStatus()
-        );
+        assertEquals(originalStatus, tm.getTaskById(commonTask.getId())
+                                       .getStatus());
         commonTask.setStatus(Statuses.DONE);
         tm.updateTask(commonTask);
-        assertEquals(
-                Statuses.DONE,
-                tm.getTaskById(commonTask.getId()).getStatus()
-        );
+        assertEquals(Statuses.DONE, tm.getTaskById(commonTask.getId())
+                                      .getStatus());
 
     }
 
@@ -271,16 +274,12 @@ class InMemoryTaskManagerTest {
         SubTask firstSubtask = tm.getSubtaskById(5);
         assertEquals(Statuses.NEW, firstSubtask.getStatus());
         tm.updateSubTask(firstSubtask);
-        assertEquals(
-                Statuses.NEW,
-                tm.getSubtaskById(firstSubtask.getId()).getStatus()
-        );
+        assertEquals(Statuses.NEW, tm.getSubtaskById(firstSubtask.getId())
+                                     .getStatus());
         firstSubtask.setStatus(Statuses.DONE);
         tm.updateSubTask(firstSubtask);
-        assertEquals(
-                Statuses.DONE,
-                tm.getSubtaskById(firstSubtask.getId()).getStatus()
-        );
+        assertEquals(Statuses.DONE, tm.getSubtaskById(firstSubtask.getId())
+                                      .getStatus());
 
     }
 
@@ -290,10 +289,8 @@ class InMemoryTaskManagerTest {
 
         SubTask subTask = tm.getSubtaskById(6);
         subTask.setParentId(1);
-        assertThrows(
-                NullPointerException.class,
-                () -> tm.updateSubTask(subTask)
-        );
+        assertThrows(NullPointerException.class,
+                     () -> tm.updateSubTask(subTask));
 
     }
 
@@ -368,7 +365,8 @@ class InMemoryTaskManagerTest {
     void getHistoryShouldReturnEmptyList() {
         setUpFullStand();
 
-        assertTrue(tm.getHistory().isEmpty());
+        assertTrue(tm.getHistory()
+                     .isEmpty());
     }
 
     @Test
@@ -398,11 +396,11 @@ class InMemoryTaskManagerTest {
         tm.getTaskById(1);
         //tm.getHistory().forEach(System.out::println);
 
-        assertEquals(task, tm.getHistory().get(0));
-        assertNotEquals(
-                task,
-                tm.getHistory().get(0).getStatus()
-        );
+        assertEquals(task, tm.getHistory()
+                             .get(0));
+        assertNotEquals(task, tm.getHistory()
+                                .get(0)
+                                .getStatus());
 
 
     }
@@ -413,18 +411,18 @@ class InMemoryTaskManagerTest {
 
         EpicTask epicTask = tm.getEpicById(3);
         tm.deleteSubtaskById(epicTask.getSubtasksIDs()
-                .stream()
-                .findFirst()
-                .orElse(0));
+                                     .stream()
+                                     .findFirst()
+                                     .orElse(0));
 
         tm.updateEpic(epicTask);
         //tm.getEpicById(3);
         //tm.getHistory().forEach(System.out::println);
-        assertEquals(epicTask, tm.getHistory().get(0));
-        assertNotEquals(
-                epicTask.getSubtasksIDs(),
-                ((EpicTask) tm.getHistory().get(0)).getSubtasksIDs()
-        );
+        assertEquals(epicTask, tm.getHistory()
+                                 .get(0));
+        assertNotEquals(epicTask.getSubtasksIDs(), ((EpicTask) tm.getHistory()
+                                                                 .get(0)
+        ).getSubtasksIDs());
 
 
     }
@@ -437,11 +435,11 @@ class InMemoryTaskManagerTest {
         subTask.setParentId(4);
         //SubTask subtaskNew = tm.getSubtaskById(6);
         //tm.getHistory().forEach(System.out::println);
-        assertEquals(subTask, tm.getHistory().get(0));
-        assertNotEquals(
-                subTask.getParentId(),
-                ((SubTask) tm.getHistory().get(0)).getParentId()
-        );
+        assertEquals(subTask, tm.getHistory()
+                                .get(0));
+        assertNotEquals(subTask.getParentId(), ((SubTask) tm.getHistory()
+                                                            .get(0)
+        ).getParentId());
 
     }
 }

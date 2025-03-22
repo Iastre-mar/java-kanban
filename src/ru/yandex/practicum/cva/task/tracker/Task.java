@@ -55,7 +55,8 @@ public class Task implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Task task)) return false;
+        if (!(o instanceof Task task))
+            return false;
         return id == task.id;
     }
 
@@ -67,17 +68,17 @@ public class Task implements Cloneable {
     @Override
     public String toString() {
         return "Task{" +
-                "id=" +
-                id +
-                ", name='" +
-                name +
-                '\'' +
-                ", description='" +
-                description +
-                '\'' +
-                ", status=" +
-                status +
-                '}';
+               "id=" +
+               id +
+               ", name='" +
+               name +
+               '\'' +
+               ", description='" +
+               description +
+               '\'' +
+               ", status=" +
+               status +
+               '}';
     }
 
     @Override
