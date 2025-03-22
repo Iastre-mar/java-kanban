@@ -397,10 +397,11 @@ class InMemoryTaskManagerTest {
         tm.updateTask(task);
         tm.getTaskById(1);
         //tm.getHistory().forEach(System.out::println);
-        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+
+        assertEquals(task, tm.getHistory().get(0));
         assertNotEquals(
-                tm.getHistory().get(0).getStatus(),
-                tm.getHistory().get(1).getStatus()
+                task,
+                tm.getHistory().get(0).getStatus()
         );
 
 
@@ -417,12 +418,12 @@ class InMemoryTaskManagerTest {
                 .orElse(0));
 
         tm.updateEpic(epicTask);
-        tm.getEpicById(3);
+        //tm.getEpicById(3);
         //tm.getHistory().forEach(System.out::println);
-        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertEquals(epicTask, tm.getHistory().get(0));
         assertNotEquals(
-                ((EpicTask) tm.getHistory().get(0)).getSubtasksIDs(),
-                ((EpicTask) tm.getHistory().get(1)).getSubtasksIDs()
+                epicTask.getSubtasksIDs(),
+                ((EpicTask) tm.getHistory().get(0)).getSubtasksIDs()
         );
 
 
@@ -434,12 +435,12 @@ class InMemoryTaskManagerTest {
 
         SubTask subTask = tm.getSubtaskById(6);
         subTask.setParentId(4);
-        SubTask subtaskNew = tm.getSubtaskById(6);
+        //SubTask subtaskNew = tm.getSubtaskById(6);
         //tm.getHistory().forEach(System.out::println);
-        assertEquals(tm.getHistory().get(0), tm.getHistory().get(1));
+        assertEquals(subTask, tm.getHistory().get(0));
         assertNotEquals(
-                ((SubTask) tm.getHistory().get(0)).getParentId(),
-                ((SubTask) tm.getHistory().get(1)).getParentId()
+                subTask.getParentId(),
+                ((SubTask) tm.getHistory().get(0)).getParentId()
         );
 
     }

@@ -18,7 +18,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        tasks.add(task);
+        if (task != null){
+            tasks.add(task.clone());
+        }
+
     }
 
     @Override
@@ -99,6 +102,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
 
             public void linkLast(E value) {
+                ensureListFunctionality();
                 Node newNode = new Node();
                 newNode.value = value;
                 Node prevLast = last.prev;
@@ -128,6 +132,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 if (node != null) {
                     node.prev.next = null;
                     node.next.prev = null;
+                    ensureListFunctionality();
                     res = node.value;
                     size--;
                 }
@@ -154,6 +159,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
 
 
+            private void ensureListFunctionality(){
+                if (size() == 0) {
+                    first.next = last;
+                    last.prev = first;
+                }
+            }
+
+
             private class Node {
                 private Node prev;
                 private E value;
@@ -162,28 +175,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 
         }
-    }
-
-    public static void main(String[] args) {
-        InMemoryHistoryManager ih = new InMemoryHistoryManager();
-        //System.out.println(ih.tasks.list.getTasks());
-        //ih.tasks.list.linkLast(new Task("PWD"));
-        //System.out.println(ih.tasks.list.getTasks());
-        //ih.tasks.list.linkLast(new EpicTask("PWD2"));
-        //System.out.println(ih.tasks.list.getTasks());
-        //System.out.println(ih.tasks.list.get(1));
-        //System.out.println(ih.tasks.list.remove(-1));
-        Task task1 = new Task("PWD");
-        task1.setId(1);
-        ih.add(task1);
-
-        System.out.println(ih.getHistory());
-
-        ih.add(new EpicTask("PWD2"));
-
-        System.out.println(ih.getHistory());
-
-        System.out.println(ih.tasks.size());
     }
 
 

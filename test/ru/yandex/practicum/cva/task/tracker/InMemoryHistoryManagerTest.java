@@ -32,6 +32,14 @@ class InMemoryHistoryManagerTest {
                 "Принадлежит второму Эпику"
         );
 
+        firstCommonTask.setId(1);
+        secondCommonTask.setId(2);
+        firstEpicTask.setId(3);
+        secondEpicTask.setId(4);
+        firstSubTask.setId(5);
+        secondSubTask.setId(6);
+        thirdSubTask.setId(7);
+
         tq.add(firstCommonTask);
         tq.add(secondCommonTask);
         tq.add(firstEpicTask);
@@ -57,35 +65,6 @@ class InMemoryHistoryManagerTest {
         int sizeAfter = tq.getHistory().size(); // 8
         assertEquals(initialSize + 1, sizeAfter);
         assertEquals("testAdd", tq.getHistory().get(sizeAfter - 1).getName());
-    }
-
-    @Test
-    void addShouldGrowQueueUntilCapacity10() {
-        int initialSize = tq.getHistory().size(); // 7
-        tq.add(new Task("8th"));
-        tq.add(new Task("9th"));
-        tq.add(new Task("10th"));
-        tq.add(new Task("11th"));
-        int sizeAfter = tq.getHistory().size(); // 10
-        assertEquals(initialSize + 3, sizeAfter);
-    }
-
-    @Test
-    void shouldImitateQueue() {
-        int initialSize = tq.getHistory().size(); // 7
-        tq.add(new Task("8th")); // first elem after put ten times
-        tq.add(new Task("9th"));
-        tq.add(new Task("10th"));
-        tq.add(new Task("11th"));
-        tq.add(new Task("12th"));
-        tq.add(new Task("13th"));
-        tq.add(new Task("14th"));
-        tq.add(new Task("15th"));
-        tq.add(new Task("16th"));
-        tq.add(new Task("17th"));
-        int sizeAfter = tq.getHistory().size(); // 10
-        assertEquals(initialSize + 3, sizeAfter);
-        assertEquals("8th", tq.getHistory().getFirst().getName());
     }
 
 
