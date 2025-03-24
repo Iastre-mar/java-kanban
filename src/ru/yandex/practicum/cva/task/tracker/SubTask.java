@@ -12,14 +12,14 @@ public class SubTask extends Task {
         super(name);
     }
 
+    public int getParentId() {
+        return parentId;
+    }
+
     public void setParentId(int parentId) {
         if (parentId != this.parentId) {
             this.parentId = parentId;
         }
-    }
-
-    public int getParentId() {
-        return parentId;
     }
 
     @Override

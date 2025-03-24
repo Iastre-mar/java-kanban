@@ -443,36 +443,48 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void deleteEpicShallRemoveTheirSubtasksFromHistoryToo(){
+    void deleteEpicShallRemoveTheirSubtasksFromHistoryToo() {
         setUpFullStand();
-        assertEquals(0, tm.getHistory().size());
+        assertEquals(0, tm.getHistory()
+                          .size());
 
         tm.getEpicById(3);
-        assertEquals(1, tm.getHistory().size());
+        assertEquals(1, tm.getHistory()
+                          .size());
         tm.getEpicById(4);
-        assertEquals(2, tm.getHistory().size());
+        assertEquals(2, tm.getHistory()
+                          .size());
         tm.getSubtaskById(5);
         tm.getSubtaskById(6);
-        assertEquals(4, tm.getHistory().size());
+        assertEquals(4, tm.getHistory()
+                          .size());
         tm.deleteEpicById(3);
-        assertEquals(1, tm.getHistory().size());
+        assertEquals(1, tm.getHistory()
+                          .size());
     }
 
 
     @Test
-    void getShallAddHistoryOrdered(){
+    void getShallAddHistoryOrdered() {
         setUpFullStand();
-        assertEquals(0, tm.getHistory().size());
+        assertEquals(0, tm.getHistory()
+                          .size());
         tm.getTaskById(2);
         tm.getEpicById(4);
         tm.getTaskById(1);
-        assertEquals(2, tm.getHistory().get(0).getId());
-        assertEquals(4, tm.getHistory().get(1).getId());
+        assertEquals(2, tm.getHistory()
+                          .get(0)
+                          .getId());
+        assertEquals(4, tm.getHistory()
+                          .get(1)
+                          .getId());
 
 
         tm.getSubtaskById(5);
         tm.deleteTaskById(1);
-        assertEquals(5, tm.getHistory().get(2).getId());
+        assertEquals(5, tm.getHistory()
+                          .get(2)
+                          .getId());
 
     }
 }
