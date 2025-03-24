@@ -110,5 +110,14 @@ class InMemoryHistoryManagerTest {
 
     }
 
+    @Test
+    void emptyHistoryShallHave0Tasks(){
+        HistoryManager tq = new InMemoryHistoryManager();
+        tq.add(new Task("Test"));
+        assertEquals(1, tq.getHistory().size());
+        tq.remove(0);
+        assertEquals(0, tq.getHistory().size());
+    }
+
 
 }
