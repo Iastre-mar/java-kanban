@@ -6,10 +6,12 @@ public class SubTask extends Task {
 
     public SubTask(String name, String description) {
         super(name, description);
+        this.taskType = TaskType.SUBTASK;
     }
 
     public SubTask(String name) {
         super(name);
+        this.taskType = TaskType.SUBTASK;
     }
 
     public int getParentId() {
