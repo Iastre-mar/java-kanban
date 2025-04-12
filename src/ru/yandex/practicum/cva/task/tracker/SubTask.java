@@ -12,31 +12,31 @@ public class SubTask extends Task {
         super(name);
     }
 
+    public int getParentId() {
+        return parentId;
+    }
+
     public void setParentId(int parentId) {
         if (parentId != this.parentId) {
             this.parentId = parentId;
         }
     }
 
-    public int getParentId() {
-        return parentId;
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +
-                "id=" +
-                id +
-                ", name='" +
-                name +
-                '\'' +
-                ", description='" +
-                description +
-                '\'' +
-                ", status=" +
-                status +
-                ", parentId=" +
-                parentId +
-                '}';
+               "id=" +
+               id +
+               ", name='" +
+               name +
+               '\'' +
+               ", description='" +
+               description +
+               '\'' +
+               ", status=" +
+               status +
+               ", parentId=" +
+               parentId +
+               '}';
     }
 }

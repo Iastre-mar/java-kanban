@@ -2,17 +2,16 @@ package ru.yandex.practicum.cva.task.tracker;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class SubTaskTest {
 
     @Test
     void testEquals() {
         SubTask firstSubTask = new SubTask("Первая подзадача");
-        SubTask secondSubTask = new SubTask(
-                "Вторая подзадача",
-                "Принадлежит первому Эпику"
-        );
+        SubTask secondSubTask = new SubTask("Вторая подзадача",
+                                            "Принадлежит первому Эпику");
 
         firstSubTask.setId(1);
         secondSubTask.setId(2);

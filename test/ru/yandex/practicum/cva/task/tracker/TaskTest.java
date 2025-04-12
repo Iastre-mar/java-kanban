@@ -29,13 +29,10 @@ class TaskTest {
 
         assertEquals(
                 "Task{id=0, name='Первая', description='null', status=NEW}",
-                firstCommonTask.toString()
-        );
+                firstCommonTask.toString());
         assertEquals(
                 "Task{id=1, name='Вторая', description='Описание второй " +
-                        "Тест', status=DONE}",
-                secondCommonTask.toString()
-        );
+                "Тест', status=DONE}", secondCommonTask.toString());
     }
 
     @Test
