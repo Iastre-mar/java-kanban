@@ -98,7 +98,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return subTask;
     }
 
-    public void save() {
+    private void save() {
         String autoSaveFilePath = Paths.get(backupDirectory, backupFileName)
                                        .toString();
 
