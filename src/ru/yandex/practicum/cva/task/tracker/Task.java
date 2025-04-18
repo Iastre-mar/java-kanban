@@ -8,16 +8,19 @@ public class Task implements Cloneable {
     protected String name;
     protected String description;
     protected Statuses status;
+    protected TaskType taskType;
 
     public Task(String name, String description) {
         this.name = name;
-        this.description = description;
         this.status = Statuses.NEW;
+        this.taskType = TaskType.TASK;
+        this.description = description;
     }
 
     public Task(String name) {
         this.name = name;
         this.status = Statuses.NEW;
+        this.taskType = TaskType.TASK;
     }
 
     public Statuses getStatus() {
@@ -36,6 +39,10 @@ public class Task implements Cloneable {
         this.id = id;
     }
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     public String getName() {
         return name;
     }
@@ -51,7 +58,6 @@ public class Task implements Cloneable {
     public void setDescription(String description) {
         this.description = description;
     }
-
 
     @Override
     public boolean equals(Object o) {

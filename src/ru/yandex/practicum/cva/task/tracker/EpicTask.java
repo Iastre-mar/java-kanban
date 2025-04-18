@@ -9,10 +9,12 @@ public class EpicTask extends Task {
 
     public EpicTask(String name, String description) {
         super(name, description);
+        this.taskType = TaskType.EPIC;
     }
 
     public EpicTask(String name) {
         super(name);
+        this.taskType = TaskType.EPIC;
     }
 
     @Override

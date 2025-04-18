@@ -1,12 +1,15 @@
 import ru.yandex.practicum.cva.task.tracker.*;
 
+import java.io.File;
+import java.nio.file.Paths;
+
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        TaskManager tm = Managers.getDefault();
+        TaskManager tm = new FileBackedTaskManager(); //Managers.getDefault();
 
 
         // Создание объектов
@@ -154,6 +157,12 @@ public class Main {
 
          */
 
+        File backup = new File(
+                String.valueOf(Paths.get("src/resources", "autosave.csv")));
+
+        TaskManager tm2 = FileBackedTaskManager.loadFromFile(backup);
+        System.out.println();
+
         System.out.println("Седьмой Тест удалим вторую задачу и второй эпик");
 
         tm.deleteTaskById(2);
@@ -197,5 +206,8 @@ public class Main {
           .forEach(System.out::println);
 
 
+
+
     }
+
 }
