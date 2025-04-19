@@ -1,11 +1,14 @@
 package ru.yandex.practicum.cva.task.tracker;
 
 
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 public class EpicTask extends Task {
     private Set<Integer> setOfSubtasksID = new HashSet<>();
+    private LocalDateTime endTime;
 
     public EpicTask(String name, String description) {
         super(name, description);
@@ -15,6 +18,24 @@ public class EpicTask extends Task {
     public EpicTask(String name) {
         super(name);
         this.taskType = TaskType.EPIC;
+    }
+
+    public void addNewSubtask(int id) {
+        if (id != this.id) {
+            this.setOfSubtasksID.add(id);
+        }
+    }
+
+    public boolean removeSubtask(int id) {
+        return this.setOfSubtasksID.remove(id);
+    }
+
+    public Set<Integer> getSubtasksIDs() {
+        return this.setOfSubtasksID;
+    }
+
+    public void setSubtasksId(Set<Integer> subtasksId) {
+        this.setOfSubtasksID = subtasksId;
     }
 
     @Override
@@ -42,22 +63,13 @@ public class EpicTask extends Task {
         return newEpic;
     }
 
-    public void addNewSubtask(int id) {
-        if (id != this.id) {
-            this.setOfSubtasksID.add(id);
-        }
+    @Override
+    public LocalDateTime getEndTime(){
+        return this.endTime;
     }
 
-    public boolean removeSubtask(int id) {
-        return this.setOfSubtasksID.remove(id);
-    }
-
-    public Set<Integer> getSubtasksIDs() {
-        return this.setOfSubtasksID;
-    }
-
-    public void setSubtasksId(Set<Integer> subtasksId) {
-        this.setOfSubtasksID = subtasksId;
+    public void setEndTime(LocalDateTime endTime){
+        this.endTime = endTime;
     }
 
 }

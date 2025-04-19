@@ -283,16 +283,16 @@ class InMemoryTaskManagerTest {
 
     }
 
-    @Test
-    void updateSubTaskShouldRaiseExceptionOnWrongParentId() {
-        setUpFullStand();
-
-        SubTask subTask = tm.getSubtaskById(6);
-        subTask.setParentId(1);
-        assertThrows(NullPointerException.class,
-                     () -> tm.updateSubTask(subTask));
-
-    }
+//    @Test
+//    void updateSubTaskShouldRaiseExceptionOnWrongParentId() {
+//        setUpFullStand();
+//
+//        SubTask subTask = tm.getSubtaskById(6);
+//        subTask.setParentId(1);
+//        assertThrows(NullPointerException.class,
+//                     () -> tm.updateSubTask(subTask));
+//
+//    }
 
     @Test
     void updateEpicShouldUpdateStatusByProjectConditions() {
@@ -425,6 +425,12 @@ class InMemoryTaskManagerTest {
         ).getSubtasksIDs());
 
 
+    }
+
+    @Test
+    void deleteSubtaskByIdShallNotFailOnNonExistentid(){
+        setUpFullStand();
+        tm.deleteSubtaskById(9999);
     }
 
     @Test

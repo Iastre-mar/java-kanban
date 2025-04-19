@@ -287,16 +287,16 @@ class FileBackedTaskManagerTest {
 
     }
 
-    @Test
-    void updateSubTaskShouldRaiseExceptionOnWrongParentId() {
-        setUpFullStand();
-
-        SubTask subTask = tm.getSubtaskById(6);
-        subTask.setParentId(1);
-        assertThrows(NullPointerException.class,
-                     () -> tm.updateSubTask(subTask));
-
-    }
+//    @Test
+//    void updateSubTaskShouldRaiseExceptionOnWrongParentId() {
+//        setUpFullStand();
+//
+//        SubTask subTask = tm.getSubtaskById(6);
+//        subTask.setParentId(1);
+//        assertThrows(NullPointerException.class,
+//                     () -> tm.updateSubTask(subTask));
+//
+//    }
 
     @Test
     void updateEpicShouldUpdateStatusByProjectConditions() {

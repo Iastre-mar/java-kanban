@@ -1,5 +1,7 @@
 package ru.yandex.practicum.cva.task.tracker;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -9,6 +11,8 @@ public class Task implements Cloneable {
     protected String description;
     protected Statuses status;
     protected TaskType taskType;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
     public Task(String name, String description) {
         this.name = name;
@@ -59,6 +63,26 @@ public class Task implements Cloneable {
         this.description = description;
     }
 
+    public LocalDateTime getEndTime(){
+        return startTime == null ? null : startTime.plus(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Task task))
@@ -96,4 +120,6 @@ public class Task implements Cloneable {
             throw new AssertionError();
         }
     }
+
+
 }
