@@ -226,7 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
         checkTimeOfEpic(id);
     }
 
-    private void checkStatusOfEpic(int id){
+    private void checkStatusOfEpic(int id) {
         EpicTask epic = getEpicByIdInternal(id);
         List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
         Statuses newStatus;
@@ -251,29 +251,41 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask epic = getEpicByIdInternal(id);
 
         List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
-        LocalDateTime startTimeOfEpic = subTasksOfEpic.stream()
-                                                      .map(SubTask::getStartTime)
-                                                      .filter(Objects::nonNull)
-                                                      .min(Comparator.naturalOrder())
-                                                      .orElse(null);
+
+        LocalDateTime startTimeOfEpic = getMinStartTimeOfSubtasksList(subTasksOfEpic);
         epic.setStartTime(startTimeOfEpic);
 
-        LocalDateTime endTimeOfEpic = subTasksOfEpic.stream()
-                                                    .map(SubTask::getEndTime)
-                                                    .filter(Objects::nonNull)
-                                                    .max(Comparator.naturalOrder())
-                                                    .orElse(null);
+        LocalDateTime endTimeOfEpic = getMaxEndTimeOfSubtasksList(subTasksOfEpic);
 
         epic.setEndTime(endTimeOfEpic);
 
-        Duration durationSum = subTasksOfEpic.stream()
-                                             .map(SubTask::getDuration)
-                                             .filter(Objects::nonNull)
-                                             .reduce(Duration.ZERO,
-                                                     Duration::plus);
+        Duration durationSum = getSumOfPeriodsOfSubtasksInList(subTasksOfEpic);
         epic.setDuration(durationSum);
 
 
+    }
+
+    private LocalDateTime getMinStartTimeOfSubtasksList(List<SubTask> subTasksOfEpic) {
+        return subTasksOfEpic.stream()
+                             .map(SubTask::getStartTime)
+                             .filter(Objects::nonNull)
+                             .min(Comparator.naturalOrder())
+                             .orElse(null);
+    }
+
+    private LocalDateTime getMaxEndTimeOfSubtasksList(List<SubTask> subTasksOfEpic){
+        return subTasksOfEpic.stream()
+                             .map(SubTask::getEndTime)
+                             .filter(Objects::nonNull)
+                             .max(Comparator.naturalOrder())
+                             .orElse(null);
+    }
+
+    private Duration getSumOfPeriodsOfSubtasksInList(List<SubTask> subTasksOfEpic){
+        return subTasksOfEpic.stream()
+                      .map(SubTask::getDuration)
+                      .reduce(Duration.ZERO,
+                              Duration::plus);
     }
 
     private Task getTaskByIdInternal(int id) {

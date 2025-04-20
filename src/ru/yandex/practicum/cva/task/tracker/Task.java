@@ -3,6 +3,7 @@ package ru.yandex.practicum.cva.task.tracker;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 
 public class Task implements Cloneable {
@@ -76,7 +77,7 @@ public class Task implements Cloneable {
     }
 
     public Duration getDuration() {
-        return duration;
+        return Optional.ofNullable(duration).orElse(Duration.ZERO);
     }
 
     public void setDuration(Duration duration) {
