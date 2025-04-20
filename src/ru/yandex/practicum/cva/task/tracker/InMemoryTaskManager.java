@@ -9,11 +9,15 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> taskMap = new HashMap<>();
     protected final Map<Integer, EpicTask> epicMap = new HashMap<>();
     protected final Map<Integer, SubTask> subTaskMap = new HashMap<>();
+    protected final TreeSet<Task> prioritizeTasks;
     protected final HistoryManager historyManager;
     protected int lastID = 0;
 
     public InMemoryTaskManager() {
         historyManager = Managers.getDefaultHistory();
+        prioritizeTasks = new TreeSet<>(
+                Comparator.comparing(Task::getStartTime, Comparator.nullsLast(
+                        Comparator.naturalOrder())));
     }
 
     @Override
@@ -23,6 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
             int currentId = this.generateId();
             task.setId(currentId);
             taskMap.put(task.getId(), task);
+            prioritizeTasks.add(task);
         }
 
         return task;
@@ -48,6 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
             int currentId = this.generateId();
             task.setId(currentId);
             subTaskMap.put(task.getId(), task);
+            prioritizeTasks.add(task);
         }
 
         return task;
@@ -95,7 +101,6 @@ public class InMemoryTaskManager implements TaskManager {
             deleteSubtaskById(id);
         }
     }
-
 
     @Override
     public Task getTaskById(int id) {
@@ -169,6 +174,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task deleteTaskById(int id) {
         historyManager.remove(id);
+        prioritizeTasks.remove(getTaskByIdInternal(id));
         return this.taskMap.remove(id);
     }
 
@@ -189,9 +195,12 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask subTask = getSubtaskByIdInternal(id);
 
         historyManager.remove(subTask.getId());
+        prioritizeTasks.remove(getSubtaskByIdInternal(id));
+
         int parentId = subTask.getParentId();
         getEpicByIdInternal(parentId).removeSubtask(id);
         checkEpic(parentId);
+
 
         return subTaskMap.remove(id);
     }
@@ -215,6 +224,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return this.historyManager.getHistory();
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        return prioritizeTasks.stream()
+                              .filter(task -> task.getStartTime() != null)
+                              .toList();
     }
 
     private int generateId() {
@@ -252,10 +267,12 @@ public class InMemoryTaskManager implements TaskManager {
 
         List<SubTask> subTasksOfEpic = getTasksOfEpic(id);
 
-        LocalDateTime startTimeOfEpic = getMinStartTimeOfSubtasksList(subTasksOfEpic);
+        LocalDateTime startTimeOfEpic = getMinStartTimeOfSubtasksList(
+                subTasksOfEpic);
         epic.setStartTime(startTimeOfEpic);
 
-        LocalDateTime endTimeOfEpic = getMaxEndTimeOfSubtasksList(subTasksOfEpic);
+        LocalDateTime endTimeOfEpic = getMaxEndTimeOfSubtasksList(
+                subTasksOfEpic);
 
         epic.setEndTime(endTimeOfEpic);
 
@@ -273,7 +290,7 @@ public class InMemoryTaskManager implements TaskManager {
                              .orElse(null);
     }
 
-    private LocalDateTime getMaxEndTimeOfSubtasksList(List<SubTask> subTasksOfEpic){
+    private LocalDateTime getMaxEndTimeOfSubtasksList(List<SubTask> subTasksOfEpic) {
         return subTasksOfEpic.stream()
                              .map(SubTask::getEndTime)
                              .filter(Objects::nonNull)
@@ -281,11 +298,10 @@ public class InMemoryTaskManager implements TaskManager {
                              .orElse(null);
     }
 
-    private Duration getSumOfPeriodsOfSubtasksInList(List<SubTask> subTasksOfEpic){
+    private Duration getSumOfPeriodsOfSubtasksInList(List<SubTask> subTasksOfEpic) {
         return subTasksOfEpic.stream()
-                      .map(SubTask::getDuration)
-                      .reduce(Duration.ZERO,
-                              Duration::plus);
+                             .map(SubTask::getDuration)
+                             .reduce(Duration.ZERO, Duration::plus);
     }
 
     private Task getTaskByIdInternal(int id) {
