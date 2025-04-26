@@ -242,13 +242,21 @@ public class InMemoryTaskManager implements TaskManager {
                               .toList();
     }
 
-    private int generateId() {
-        return ++this.lastID;
+    protected void addTaskToPrioritizeTasks(Task task) {
+        removeTaskFromPrioritizeTasks(task);
+        if (checkCanTaskBeAddedToPriorityList(task)) {
+
+            prioritizeTasks.add(task);
+        }
     }
 
     protected void checkEpic(int id) {
         checkStatusOfEpic(id);
         checkTimeOfEpic(id);
+    }
+
+    private int generateId() {
+        return ++this.lastID;
     }
 
     private void checkStatusOfEpic(int id) {
@@ -355,14 +363,6 @@ public class InMemoryTaskManager implements TaskManager {
               .map(Objects::requireNonNull)
               .findFirst();
 
-    }
-
-    private void addTaskToPrioritizeTasks(Task task) {
-        removeTaskFromPrioritizeTasks(task);
-        if (checkCanTaskBeAddedToPriorityList(task)) {
-
-            prioritizeTasks.add(task);
-        }
     }
 
     private void removeTaskFromPrioritizeTasks(Task task) {

@@ -2,6 +2,8 @@ package ru.yandex.practicum.cva.task.tracker;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ public class Task implements Cloneable {
     protected TaskType taskType;
     protected LocalDateTime startTime;
     protected Duration duration;
+    private final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
 
     public Task(String name, String description) {
         this.name = name;
@@ -72,8 +75,20 @@ public class Task implements Cloneable {
         return startTime;
     }
 
+    public String getStartTimeFormatted() {
+        return (startTime == null) ? null : startTime.format(getDtf());
+    }
+
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        try {
+            this.startTime = LocalDateTime.parse(startTime, getDtf());
+        } catch (DateTimeParseException ignored) {
+            // Значит неправильный формат, скорее всего пришел "null", ожидаемо
+        }
     }
 
     public Duration getDuration() {
@@ -83,6 +98,10 @@ public class Task implements Cloneable {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public DateTimeFormatter getDtf() {
+        return this.dtf;
     }
 
     @Override
