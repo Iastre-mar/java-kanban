@@ -9,6 +9,7 @@ import java.util.Optional;
 
 
 public class Task implements Cloneable {
+    private final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
     protected int id;
     protected String name;
     protected String description;
@@ -16,7 +17,6 @@ public class Task implements Cloneable {
     protected TaskType taskType;
     protected LocalDateTime startTime;
     protected Duration duration;
-    private final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
 
     public Task(String name, String description) {
         this.name = name;
@@ -75,10 +75,6 @@ public class Task implements Cloneable {
         return startTime;
     }
 
-    public String getStartTimeFormatted() {
-        return (startTime == null) ? null : startTime.format(getDtf());
-    }
-
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
@@ -89,6 +85,10 @@ public class Task implements Cloneable {
         } catch (DateTimeParseException ignored) {
             // Значит неправильный формат, скорее всего пришел "null", ожидаемо
         }
+    }
+
+    public String getStartTimeFormatted() {
+        return (startTime == null) ? null : startTime.format(getDtf());
     }
 
     public Duration getDuration() {

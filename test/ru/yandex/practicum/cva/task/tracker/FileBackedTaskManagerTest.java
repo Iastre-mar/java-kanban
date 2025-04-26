@@ -7,17 +7,16 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
-    FileBackedTaskManager tm;
-    Task[] tasks;
+class FileBackedTaskManagerTest
+        extends TaskManagerTest<FileBackedTaskManager> {
     private final String backupFileName = "autosave.csv";
     private final String backupDirectory = "out/";
+    FileBackedTaskManager tm;
+    Task[] tasks;
 
     @Override
     @BeforeEach
@@ -38,8 +37,8 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
                                            "Принадлежит второму Эпику");
 
         firstCommonTask.setStartTime(LocalDateTime.of(2011, 11, 11, 11, 11));
-        firstCommonTask.setDuration(Duration.of(1,
-                                                TimeUnit.HOURS.toChronoUnit()));
+        firstCommonTask.setDuration(
+                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
 
         /*secondCommonTask.setStartTime(LocalDateTime.of(2012, 12, 12, 12, 12));
         secondCommonTask.setDuration(Duration.of(2,
@@ -48,12 +47,12 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
          */
 
         firstSubTask.setStartTime(LocalDateTime.of(2007, 11, 11, 11, 11));
-        firstSubTask.setDuration(Duration.of(364,
-                                                 TimeUnit.DAYS.toChronoUnit()));
+        firstSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
 
         secondSubTask.setStartTime(LocalDateTime.of(2008, 11, 11, 11, 11));
-        secondSubTask.setDuration(Duration.of(364,
-                                             TimeUnit.DAYS.toChronoUnit()));
+        secondSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
 
         thirdSubTask.setStartTime(LocalDateTime.of(2009, 1, 1, 11, 11));
 
@@ -114,23 +113,42 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void checkTaskEveryTypeLoad(){
+    void checkTaskEveryTypeLoad() {
         setUpFullStand();
         File backup = new File(
                 String.valueOf(Paths.get(backupDirectory, backupFileName)));
 
         FileBackedTaskManager tm2 = FileBackedTaskManager.loadFromFile(backup);
 
-        assertEquals(tm.getAllTask().stream().map(Task::getName).toList(), tm2.getAllTask().stream().map(Task::getName).toList());
-        assertEquals(tm.getAllEpic().stream().map(Task::getName).toList(), tm2.getAllEpic().stream().map(Task::getName).toList());
-        assertEquals(tm.getAllSubtask().stream().map(Task::getName).toList(), tm2.getAllSubtask().stream().map(Task::getName).toList());
+        assertEquals(tm.getAllTask()
+                       .stream()
+                       .map(Task::getName)
+                       .toList(), tm2.getAllTask()
+                                     .stream()
+                                     .map(Task::getName)
+                                     .toList());
+        assertEquals(tm.getAllEpic()
+                       .stream()
+                       .map(Task::getName)
+                       .toList(), tm2.getAllEpic()
+                                     .stream()
+                                     .map(Task::getName)
+                                     .toList());
+        assertEquals(tm.getAllSubtask()
+                       .stream()
+                       .map(Task::getName)
+                       .toList(), tm2.getAllSubtask()
+                                     .stream()
+                                     .map(Task::getName)
+                                     .toList());
         assertEquals(tm.getPrioritizedTasks(), tm2.getPrioritizedTasks());
     }
 
     @Test
-    void checkCorrectnessOfIntervals(){
+    void checkCorrectnessOfIntervals() {
         setUpFullStand();
-        assertEquals(3, tm.getPrioritizedTasks().size());
+        assertEquals(3, tm.getPrioritizedTasks()
+                          .size());
     }
 
 }

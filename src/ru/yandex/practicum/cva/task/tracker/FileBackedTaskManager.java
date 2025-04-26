@@ -171,9 +171,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         }
     }
-    private void checkAllEpics(){
-        this.subTaskMap.values().stream().forEach(subTask -> epicMap.get(subTask.getParentId()).addNewSubtask(subTask.getId()));
-        this.epicMap.values().stream().map(Task::getId).forEach(this::checkEpic);
+
+    private void checkAllEpics() {
+        this.subTaskMap.values()
+                       .stream()
+                       .forEach(subTask -> epicMap.get(subTask.getParentId())
+                                                  .addNewSubtask(
+                                                          subTask.getId()));
+        this.epicMap.values()
+                    .stream()
+                    .map(Task::getId)
+                    .forEach(this::checkEpic);
     }
 
     private void checkIdLoad(Task task) {

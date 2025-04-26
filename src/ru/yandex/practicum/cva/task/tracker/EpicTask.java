@@ -1,7 +1,6 @@
 package ru.yandex.practicum.cva.task.tracker;
 
 
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,11 +63,11 @@ public class EpicTask extends Task {
     }
 
     @Override
-    public LocalDateTime getEndTime(){
+    public LocalDateTime getEndTime() {
         return this.endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime){
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

@@ -15,7 +15,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Override
     @BeforeEach
-    void setUp(){
+    void setUp() {
         tm = new InMemoryTaskManager();
         super.tm = tm;
 
@@ -32,17 +32,17 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                                            "Принадлежит второму Эпику");
 
         firstCommonTask.setStartTime(LocalDateTime.of(2011, 11, 11, 11, 11));
-        firstCommonTask.setDuration(Duration.of(1,
-                                                TimeUnit.HOURS.toChronoUnit()));
+        firstCommonTask.setDuration(
+                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
 
 
         firstSubTask.setStartTime(LocalDateTime.of(2007, 11, 11, 11, 11));
-        firstSubTask.setDuration(Duration.of(364,
-                                             TimeUnit.DAYS.toChronoUnit()));
+        firstSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
 
         secondSubTask.setStartTime(LocalDateTime.of(2008, 11, 11, 11, 11));
-        secondSubTask.setDuration(Duration.of(364,
-                                              TimeUnit.DAYS.toChronoUnit()));
+        secondSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
 
         thirdSubTask.setStartTime(LocalDateTime.of(2009, 1, 1, 11, 11));
 
@@ -88,9 +88,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
 
     @Test
-    void checkCorrectnessOfIntervals(){
+    void checkCorrectnessOfIntervals() {
         setUpFullStand();
-        assertEquals(3, tm.getPrioritizedTasks().size());
+        assertEquals(3, tm.getPrioritizedTasks()
+                          .size());
     }
 
 }

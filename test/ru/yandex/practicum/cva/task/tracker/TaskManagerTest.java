@@ -3,13 +3,9 @@ package ru.yandex.practicum.cva.task.tracker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     T tm;
@@ -384,7 +380,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubtaskByIdShallNotFailOnNonExistentid(){
+    void deleteSubtaskByIdShallNotFailOnNonExistentid() {
         setUpFullStand();
         tm.deleteSubtaskById(9999);
     }
