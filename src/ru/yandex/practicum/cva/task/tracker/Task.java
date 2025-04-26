@@ -64,8 +64,8 @@ public class Task implements Cloneable {
         this.description = description;
     }
 
-    public LocalDateTime getEndTime(){
-        return startTime == null ? null : startTime.plus(duration);
+    public LocalDateTime getEndTime() {
+        return (startTime == null) ? null : startTime.plus(getDuration());
     }
 
     public LocalDateTime getStartTime() {
@@ -77,7 +77,8 @@ public class Task implements Cloneable {
     }
 
     public Duration getDuration() {
-        return Optional.ofNullable(duration).orElse(Duration.ZERO);
+        return Optional.ofNullable(duration)
+                       .orElse(Duration.ZERO);
     }
 
     public void setDuration(Duration duration) {
@@ -86,9 +87,7 @@ public class Task implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Task task))
-            return false;
-        return id == task.id;
+        return o instanceof Task task && id == task.id;
     }
 
     @Override
