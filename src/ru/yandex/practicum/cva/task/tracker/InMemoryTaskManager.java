@@ -3,6 +3,7 @@ package ru.yandex.practicum.cva.task.tracker;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -16,8 +17,8 @@ public class InMemoryTaskManager implements TaskManager {
     public InMemoryTaskManager() {
         historyManager = Managers.getDefaultHistory();
         prioritizeTasks = new TreeSet<>(
-                Comparator.comparing(Task::getStartTime, Comparator.nullsLast(
-                        Comparator.naturalOrder())));
+                Comparator.comparing(Task::getStartTime,
+                                     Comparator.naturalOrder()));
     }
 
     @Override
@@ -27,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
             int currentId = this.generateId();
             task.setId(currentId);
             taskMap.put(task.getId(), task);
-            prioritizeTasks.add(task);
+            addTaskToPrioritizeTasks(task);
         }
 
         return task;
@@ -53,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
             int currentId = this.generateId();
             task.setId(currentId);
             subTaskMap.put(task.getId(), task);
-            prioritizeTasks.add(task);
+            addTaskToPrioritizeTasks(task);
         }
 
         return task;
@@ -123,13 +124,13 @@ public class InMemoryTaskManager implements TaskManager {
         return subTask;
     }
 
-
     @Override
     public Task updateTask(Task task) {
         Task oldTask = getTaskByIdInternal(task.getId());
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
         oldTask.setStatus(task.getStatus());
+        addTaskToPrioritizeTasks(task);
         return oldTask;
     }
 
@@ -156,6 +157,8 @@ public class InMemoryTaskManager implements TaskManager {
         oldTask.setStatus(task.getStatus());
 
         checkEpic(newParentId);
+
+        addTaskToPrioritizeTasks(task);
 
         return oldTask;
     }
@@ -314,6 +317,46 @@ public class InMemoryTaskManager implements TaskManager {
 
     private SubTask getSubtaskByIdInternal(int id) {
         return this.subTaskMap.getOrDefault(id, new SubTask(""));
+    }
+
+    private boolean checkCanTaskBeAddedToPriorityList(Task task) {
+        boolean res = false;
+        try {
+            throwNullIfTimeFieldIsNull(task);
+            List<Task> prioritizeTasks = getPrioritizedTasks();
+            res = prioritizeTasks.stream()
+                                 .filter(taskInPriorList -> isIntersectionOfTime(
+                                         task, taskInPriorList))
+                                 .toList()
+                                 .isEmpty();
+        } catch (NullPointerException npe) {
+            // Ожидаемое поведение
+        }
+        return res;
+
+    }
+
+
+    private boolean isIntersectionOfTime(Task task1, Task task2) {
+        return task1.getStartTime()
+                    .isBefore(task2.getEndTime()) &&
+               task2.getStartTime()
+                    .isBefore(task1.getEndTime());
+    }
+
+    private void throwNullIfTimeFieldIsNull(Task task) throws
+            NullPointerException {
+        Stream.of(task.getStartTime(), task.getDuration(), task.getEndTime())
+              .map(Objects::requireNonNull)
+              .findFirst();
+
+    }
+
+    private void addTaskToPrioritizeTasks(Task task){
+        prioritizeTasks.remove(task);
+        if (checkCanTaskBeAddedToPriorityList(task)){
+            prioritizeTasks.add(task);
+        }
     }
 
 }
