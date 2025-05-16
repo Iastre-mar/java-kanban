@@ -9,7 +9,10 @@ public enum ColumnsInFile {
     NAME("name"),
     STATUS("status"),
     DESCRIPTION("description"),
-    EPIC("epic");
+    EPIC("epic"),
+    STARTTIME("start_time"),
+    DURATION("duration");
+
 
     public final String columnName;
 

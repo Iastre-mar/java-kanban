@@ -2,6 +2,7 @@ package ru.yandex.practicum.cva.task.tracker;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +129,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException ioe) {
             throw new ManagerSaveException(ioe.getMessage(), ioe.getCause());
         }
-
     }
 
     private void loadTasksFromFile(File file) {
@@ -150,6 +150,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 dispatchTaskToMap(task);
                 checkIdLoad(task);
             }
+
+            checkAllEpics();
         } catch (IOException ioe) {
             throw new ManagerSaveException(ioe.getMessage(), ioe.getCause());
         }
@@ -158,9 +160,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private void dispatchTaskToMap(Task task) {
         switch (task.getTaskType()) {
             case EPIC -> epicMap.put(task.getId(), (EpicTask) task);
-            case TASK -> taskMap.put(task.getId(), task);
-            case SUBTASK -> subTaskMap.put(task.getId(), (SubTask) task);
+            case TASK -> {
+                taskMap.put(task.getId(), task);
+                addTaskToPrioritizeTasks(task);
+            }
+            case SUBTASK -> {
+                subTaskMap.put(task.getId(), (SubTask) task);
+                addTaskToPrioritizeTasks(task);
+            }
+
         }
+    }
+
+    private void checkAllEpics() {
+        this.subTaskMap.values()
+                       .stream()
+                       .forEach(subTask -> epicMap.get(subTask.getParentId())
+                                                  .addNewSubtask(
+                                                          subTask.getId()));
+        this.epicMap.values()
+                    .stream()
+                    .map(Task::getId)
+                    .forEach(this::checkEpic);
     }
 
     private void checkIdLoad(Task task) {
@@ -169,13 +190,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-
     private String toString(Task task) {
 
         String epicOfTask = null;
         if (task instanceof SubTask subTask) {
             epicOfTask = String.valueOf(subTask.getParentId());
         }
+
 
         List<String> taskProperties = new ArrayList<>();
         taskProperties.add(String.valueOf(task.getId()));
@@ -184,6 +205,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         taskProperties.add(String.valueOf(task.getStatus()));
         taskProperties.add(task.getDescription());
         taskProperties.add(epicOfTask);
+        taskProperties.add(task.getStartTimeFormatted());
+        taskProperties.add(String.valueOf(task.getDuration()));
 
         return String.join(",", taskProperties);
     }
@@ -206,13 +229,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         resTask.setDescription(
                 taskProperties.get(ColumnsInFile.DESCRIPTION.ordinal()));
 
+        resTask.setStartTime(
+                taskProperties.get(ColumnsInFile.STARTTIME.ordinal()));
+
+        resTask.setDuration(Duration.parse(
+                taskProperties.get(ColumnsInFile.DURATION.ordinal())));
+
         if (resTask instanceof SubTask) {
             ((SubTask) resTask).setParentId(Integer.parseInt(
                     taskProperties.get(ColumnsInFile.EPIC.ordinal())));
         }
 
         return resTask;
-
     }
 
 
