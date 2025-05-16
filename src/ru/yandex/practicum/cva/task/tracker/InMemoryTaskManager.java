@@ -107,6 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         Task task = this.taskMap.get(id);
+        checkIsEntityExists(task, id, TaskType.TASK);
         historyManager.add(task);
         return task;
     }
@@ -114,6 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public EpicTask getEpicById(int id) {
         EpicTask epicTask = this.epicMap.get(id);
+        checkIsEntityExists(epicTask, id, TaskType.EPIC);
         historyManager.add(epicTask);
         return epicTask;
     }
@@ -121,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubtaskById(int id) {
         SubTask subTask = this.subTaskMap.get(id);
+        checkIsEntityExists(subTask, id, TaskType.EPIC);
         historyManager.add(subTask);
         return subTask;
     }
@@ -236,6 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
         return this.historyManager.getHistory();
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return prioritizeTasks.stream()
                               .filter(task -> task.getStartTime() != null)
@@ -245,8 +249,9 @@ public class InMemoryTaskManager implements TaskManager {
     protected void addTaskToPrioritizeTasks(Task task) {
         removeTaskFromPrioritizeTasks(task);
         if (checkCanTaskBeAddedToPriorityList(task)) {
-
             prioritizeTasks.add(task);
+        } else {
+            throw new TaskOverlapException("task overlapped with other");
         }
     }
 
@@ -368,6 +373,13 @@ public class InMemoryTaskManager implements TaskManager {
     private void removeTaskFromPrioritizeTasks(Task task) {
         if (task.getStartTime() != null) {
             prioritizeTasks.remove(task);
+        }
+    }
+
+    private void checkIsEntityExists(Task task, int id, TaskType taskType) {
+        if (task == null) {
+            throw new NonExistentTaskException(
+                    "%s with id %s does not exists".formatted(taskType, id));
         }
     }
 

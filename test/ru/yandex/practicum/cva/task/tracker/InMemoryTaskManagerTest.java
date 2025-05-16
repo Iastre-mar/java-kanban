@@ -35,6 +35,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         firstCommonTask.setDuration(
                 Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
 
+        secondCommonTask.setStartTime(LocalDateTime.of(2012, 11, 11, 11, 11));
+        secondCommonTask.setDuration(
+                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
+
 
         firstSubTask.setStartTime(LocalDateTime.of(2007, 11, 11, 11, 11));
         firstSubTask.setDuration(
@@ -42,9 +46,11 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         secondSubTask.setStartTime(LocalDateTime.of(2008, 11, 11, 11, 11));
         secondSubTask.setDuration(
-                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
+                Duration.of(3, TimeUnit.DAYS.toChronoUnit()));
 
         thirdSubTask.setStartTime(LocalDateTime.of(2009, 1, 1, 11, 11));
+        thirdSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
 
 
         tasks = new Task[]{
@@ -90,7 +96,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @Test
     void checkCorrectnessOfIntervals() {
         setUpFullStand();
-        assertEquals(3, tm.getPrioritizedTasks()
+        assertEquals(5, tm.getPrioritizedTasks()
                           .size());
     }
 
