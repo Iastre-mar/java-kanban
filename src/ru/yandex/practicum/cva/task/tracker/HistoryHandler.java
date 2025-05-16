@@ -17,7 +17,7 @@ public class HistoryHandler extends BaseHttpHandler {
                                   String[] pathParts
     ) throws IOException {
         switch (endpoint) {
-            case GET -> sendText(exchange, getHistory());
+            case GET_ALL -> sendText(exchange, getHistory());
             default -> throw new NonExistentEntityException(
                     "Endpoint not found: %s %s".formatted(
                             exchange.getRequestMethod(),

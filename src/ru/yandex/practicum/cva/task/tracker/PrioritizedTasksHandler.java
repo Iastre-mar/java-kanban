@@ -18,7 +18,7 @@ public class PrioritizedTasksHandler extends BaseHttpHandler {
                                   String[] pathParts
     ) throws IOException {
         switch (endpoint) {
-            case GET -> sendText(exchange, getPrioritizedTasks());
+            case GET_ALL -> sendText(exchange, getPrioritizedTasks());
             default -> throw new NonExistentEntityException(
                     "Endpoint not found: %s %s".formatted(
                             exchange.getRequestMethod(),
