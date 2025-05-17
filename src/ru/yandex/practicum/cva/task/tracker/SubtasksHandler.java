@@ -33,11 +33,11 @@ public class SubtasksHandler extends BaseHttpHandler {
 
     private String handlePost(HttpExchange exchange) throws IOException {
         SubTask subTask = parseSubtaskFromRequest(exchange);
-        return subTask.getId() == 0 ? createSubtask(subTask) : updateSubtask(subTask);
+        return subTask.getId() == 0 ? createSubtask(subTask) : updateSubtask(
+                subTask);
     }
 
-    SubTask parseSubtaskFromRequest(HttpExchange exchange) throws
-            IOException {
+    SubTask parseSubtaskFromRequest(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody()
                                          .readAllBytes(),
                                  StandardCharsets.UTF_8);

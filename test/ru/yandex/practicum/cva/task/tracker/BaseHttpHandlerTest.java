@@ -1,15 +1,14 @@
 package ru.yandex.practicum.cva.task.tracker;
+
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -39,23 +38,14 @@ class BaseHttpHandlerTest {
         when(mockExchange.getResponseBody()).thenReturn(outputStream);
     }
 
-    private static class TestBaseHttpHandler extends BaseHttpHandler {
-        TestBaseHttpHandler(TaskManager taskManager, Gson gson) {
-            super(taskManager, gson);
-        }
-
-        @Override
-        protected void handleEndpoint(HttpExchange exchange, Endpoint endpoint, String[] pathParts) throws IOException {
-            // Потому что абстрактный
-        }
-    }
-
     @Test
     void testSend() throws IOException {
         BaseHttpHandler.send(mockExchange, "test response", 200);
 
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, "test response".getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 "test response".getBytes().length);
         assertEquals("test response", outputStream.toString());
     }
 
@@ -63,8 +53,10 @@ class BaseHttpHandlerTest {
     void testSendError() throws IOException {
         BaseHttpHandler.sendError(mockExchange, "error message", 404);
 
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(404, "error message".getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(404,
+                                                 "error message".getBytes().length);
         assertEquals("error message", outputStream.toString());
     }
 
@@ -72,8 +64,10 @@ class BaseHttpHandlerTest {
     void testSendText() throws IOException {
         handler.sendText(mockExchange, "test text");
 
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, "test text".getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 "test text".getBytes().length);
         assertEquals("test text", outputStream.toString());
     }
 
@@ -101,41 +95,62 @@ class BaseHttpHandlerTest {
     void testGetTaskEndpoint() throws URISyntaxException {
         // Test GET endpoints
         HttpExchange exchange = createMockExchange("GET", "/tasks");
-        assertEquals(Endpoint.GET_ALL, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.GET_ALL, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         exchange = createMockExchange("GET", "/tasks/123");
-        assertEquals(Endpoint.GET, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.GET, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         exchange = createMockExchange("GET", "/epics/123/subtasks");
-        assertEquals(Endpoint.GET_EPIC_SUBTASKS, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.GET_EPIC_SUBTASKS, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         // Test POST endpoints
         exchange = createMockExchange("POST", "/tasks");
-        assertEquals(Endpoint.POST, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.POST, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         exchange = createMockExchange("POST", "/tasks/123");
-        assertEquals(Endpoint.UNKNOWN, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.UNKNOWN, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         // Test DELETE endpoints
         exchange = createMockExchange("DELETE", "/tasks");
-        assertEquals(Endpoint.DELETE_ALL, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.DELETE_ALL, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         exchange = createMockExchange("DELETE", "/tasks/123");
-        assertEquals(Endpoint.DELETE, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.DELETE, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
 
         // Test unknown method
         exchange = createMockExchange("PUT", "/tasks");
-        assertEquals(Endpoint.UNKNOWN, handler.getTaskEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod()));
+        assertEquals(Endpoint.UNKNOWN, handler.getTaskEndpoint(
+                exchange.getRequestURI()
+                        .getPath(), exchange.getRequestMethod()));
     }
 
     @Test
     void testIsEpicSubtasks() {
-        assertTrue(handler.getPathParts("/epics/123/subtasks").length == 3);
-        assertTrue(handler.isEpicSubtasks(new String[]{"epics", "123", "subtasks"}));
-        assertFalse(handler.isEpicSubtasks(new String[]{"tasks", "123", "subtasks"}));
-        assertFalse(handler.isEpicSubtasks(new String[]{"epics", "abc", "subtasks"}));
+        assertEquals(3, handler.getPathParts("/epics/123/subtasks").length);
+        assertTrue(handler.isEpicSubtasks(
+                new String[]{"epics", "123", "subtasks"}));
+        assertFalse(handler.isEpicSubtasks(
+                new String[]{"tasks", "123", "subtasks"}));
+        assertFalse(handler.isEpicSubtasks(
+                new String[]{"epics", "abc", "subtasks"}));
         // 500 ошибка, все верно
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> handler.isEpicSubtasks(new String[]{"epics", "123"}));
+        assertThrows(ArrayIndexOutOfBoundsException.class,
+                     () -> handler.isEpicSubtasks(
+                             new String[]{"epics", "123"}));
     }
 
     @Test
@@ -152,17 +167,23 @@ class BaseHttpHandlerTest {
     void testHandleWithNonExistentTaskException() throws
             IOException,
             URISyntaxException {
-        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(mockTaskManager, gson) {
+        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(
+                mockTaskManager, gson) {
             @Override
-            protected void handleEndpoint(HttpExchange exchange, Endpoint endpoint, String[] pathParts) throws IOException {
+            protected void handleEndpoint(HttpExchange exchange,
+                                          Endpoint endpoint,
+                                          String[] pathParts
+            ) throws IOException {
                 throw new NonExistentTaskException("Task not found");
             }
         };
 
-        HttpExchange exchange = createMockExchangeWithResponseBody("GET", "/tasks/123");
+        HttpExchange exchange = createMockExchangeWithResponseBody("GET",
+                                                                   "/tasks/123");
         throwingHandler.handle(exchange);
 
-        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(
+                Integer.class);
         verify(exchange).sendResponseHeaders(codeCaptor.capture(), anyLong());
         assertEquals(StatusCodes.NOT_FOUND.code, codeCaptor.getValue());
     }
@@ -171,17 +192,23 @@ class BaseHttpHandlerTest {
     void testHandleWithTaskOverlapException() throws
             IOException,
             URISyntaxException {
-        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(mockTaskManager, gson) {
+        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(
+                mockTaskManager, gson) {
             @Override
-            protected void handleEndpoint(HttpExchange exchange, Endpoint endpoint, String[] pathParts) throws IOException {
+            protected void handleEndpoint(HttpExchange exchange,
+                                          Endpoint endpoint,
+                                          String[] pathParts
+            ) throws IOException {
                 throw new TaskOverlapException("Tasks overlap");
             }
         };
 
-        HttpExchange exchange = createMockExchangeWithResponseBody("GET", "/tasks/123");
+        HttpExchange exchange = createMockExchangeWithResponseBody("GET",
+                                                                   "/tasks/123");
         throwingHandler.handle(exchange);
 
-        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(
+                Integer.class);
         verify(exchange).sendResponseHeaders(codeCaptor.capture(), anyLong());
         assertEquals(StatusCodes.NOT_ACCEPTABLE.code, codeCaptor.getValue());
     }
@@ -190,22 +217,29 @@ class BaseHttpHandlerTest {
     void testHandleWithGenericException() throws
             IOException,
             URISyntaxException {
-        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(mockTaskManager, gson) {
+        BaseHttpHandler throwingHandler = new TestBaseHttpHandler(
+                mockTaskManager, gson) {
             @Override
-            protected void handleEndpoint(HttpExchange exchange, Endpoint endpoint, String[] pathParts) throws IOException {
+            protected void handleEndpoint(HttpExchange exchange,
+                                          Endpoint endpoint,
+                                          String[] pathParts
+            ) throws IOException {
                 throw new RuntimeException("Unexpected error");
             }
         };
 
-        HttpExchange exchange = createMockExchangeWithResponseBody("GET", "/tasks/123");
+        HttpExchange exchange = createMockExchangeWithResponseBody("GET",
+                                                                   "/tasks/123");
         throwingHandler.handle(exchange);
 
-        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> codeCaptor = ArgumentCaptor.forClass(
+                Integer.class);
         verify(exchange).sendResponseHeaders(codeCaptor.capture(), anyLong());
         assertEquals(StatusCodes.INTERNAL_ERROR.code, codeCaptor.getValue());
     }
 
-    private HttpExchange createMockExchange(String method, String path) throws URISyntaxException {
+    private HttpExchange createMockExchange(String method, String path) throws
+            URISyntaxException {
         HttpExchange exchange = mock(HttpExchange.class);
         Headers headers = mock(Headers.class);
 
@@ -216,10 +250,26 @@ class BaseHttpHandlerTest {
         return exchange;
     }
 
-    private HttpExchange createMockExchangeWithResponseBody(String method, String path) throws URISyntaxException {
+    private HttpExchange createMockExchangeWithResponseBody(String method,
+                                                            String path
+    ) throws URISyntaxException {
         HttpExchange exchange = createMockExchange(method, path);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(exchange.getResponseBody()).thenReturn(outputStream);
         return exchange;
+    }
+
+    private static class TestBaseHttpHandler extends BaseHttpHandler {
+        TestBaseHttpHandler(TaskManager taskManager, Gson gson) {
+            super(taskManager, gson);
+        }
+
+        @Override
+        protected void handleEndpoint(HttpExchange exchange,
+                                      Endpoint endpoint,
+                                      String[] pathParts
+        ) throws IOException {
+            // Потому что абстрактный
+        }
     }
 }

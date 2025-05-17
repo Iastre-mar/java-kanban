@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class HttpTaskServerTest {
     // создаём экземпляр InMemoryTaskManager
@@ -24,10 +25,10 @@ class HttpTaskServerTest {
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = taskServer.getGson();
 
-    public void HttpTaskManagerTasksTest() throws IOException {
+    HttpTaskServerTest() throws IOException {
     }
 
-    HttpTaskServerTest() throws IOException {
+    public void HttpTaskManagerTasksTest() throws IOException {
     }
 
     @BeforeEach
@@ -48,8 +49,7 @@ class HttpTaskServerTest {
         // создаём задачу
         Task task = new Task("Test 2", "Testing task 2");
         task.setStartTime(LocalDateTime.of(2011, 11, 11, 11, 11));
-        task.setDuration(
-                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
+        task.setDuration(Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
 
         // конвертируем её в JSON
         String taskJson = gson.toJson(task);
@@ -57,10 +57,15 @@ class HttpTaskServerTest {
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
+        HttpRequest request = HttpRequest.newBuilder()
+                                         .uri(url)
+                                         .POST(HttpRequest.BodyPublishers.ofString(
+                                                 taskJson))
+                                         .build();
 
         // вызываем рест, отвечающий за создание задач
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request,
+                                                    HttpResponse.BodyHandlers.ofString());
         // проверяем код ответа
         assertEquals(201, response.statusCode());
 
@@ -68,7 +73,10 @@ class HttpTaskServerTest {
         List<Task> tasksFromManager = manager.getAllTask();
 
         assertNotNull(tasksFromManager, "Задачи не возвращаются");
-        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-        assertEquals("Test 2", tasksFromManager.get(0).getName(), "Некорректное имя задачи");
+        assertEquals(1, tasksFromManager.size(),
+                     "Некорректное количество задач");
+        assertEquals("Test 2", tasksFromManager.get(0)
+                                               .getName(),
+                     "Некорректное имя задачи");
     }
 }

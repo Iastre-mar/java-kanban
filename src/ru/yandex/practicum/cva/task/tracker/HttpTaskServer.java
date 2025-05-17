@@ -22,16 +22,34 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException {
-        HttpTaskServer httpTaskServer = new HttpTaskServer(Managers.getDefault());
+        HttpTaskServer httpTaskServer = new HttpTaskServer(
+                Managers.getDefault());
         httpTaskServer.start();
+    }
+
+    private static Gson createGson() {
+        return new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .registerTypeAdapter(EpicTask.class,
+                                                     new EpicDeserializer())
+                                .registerTypeAdapter(Task.class,
+                                                     new TaskDeserializer())
+                                .registerTypeAdapter(SubTask.class,
+                                                     new SubTaskDeserializer())
+                                .create();
     }
 
     public void start() {
         server.createContext("/tasks", new TasksHandler(taskManager, gson));
         server.createContext("/epics", new EpicsHandler(taskManager, gson));
-        server.createContext("/subtasks", new SubtasksHandler(taskManager, gson));
-        server.createContext("/history", new HistoryHandler(taskManager, gson));
-        server.createContext("/prioritized", new PrioritizedTasksHandler(taskManager, gson));
+        server.createContext("/subtasks",
+                             new SubtasksHandler(taskManager, gson));
+        server.createContext("/history",
+                             new HistoryHandler(taskManager, gson));
+        server.createContext("/prioritized",
+                             new PrioritizedTasksHandler(taskManager, gson));
 
         server.start();
     }
@@ -42,15 +60,5 @@ public class HttpTaskServer {
 
     public Gson getGson() {
         return gson;
-    }
-
-    private static Gson createGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(EpicTask.class, new EpicDeserializer())
-                .registerTypeAdapter(Task.class, new TaskDeserializer())
-                .registerTypeAdapter(SubTask.class, new SubTaskDeserializer())
-                .create();
     }
 }

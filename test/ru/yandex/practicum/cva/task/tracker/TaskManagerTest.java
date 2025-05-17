@@ -187,7 +187,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         commonTask.setDuration(Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
         tm.createTask(commonTask);
         assertEquals(commonTask, tm.getTaskById(commonTask.getId()));
-        assertThrows(NonExistentTaskException.class, () -> tm.getTaskById(commonTask.getId() - 1));
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.getTaskById(commonTask.getId() - 1));
     }
 
     @Test
@@ -196,7 +197,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         EpicTask epicTask = new EpicTask("Третий эпик");
         tm.createEpic(epicTask);
         assertEquals(epicTask, tm.getEpicById(epicTask.getId()));
-        assertThrows(NonExistentTaskException.class, () -> tm.getEpicById(epicTask.getId() - 1));
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.getEpicById(epicTask.getId() - 1));
     }
 
     @Test
@@ -389,7 +391,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void deleteSubtaskByIdShallFailOnNonExistentid() {
         setUpFullStand();
-        assertThrows(NonExistentTaskException.class, () -> tm.deleteSubtaskById(9999));
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.deleteSubtaskById(9999));
     }
 
     @Test

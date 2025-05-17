@@ -18,24 +18,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
         this.gson = gson;
     }
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        try {
-            final String requestPath = exchange.getRequestURI().getPath();
-            final String requestMethod = exchange.getRequestMethod();
-            final String[] pathParts = getPathParts(requestPath);
-
-            final Endpoint endpoint = getTaskEndpoint(requestPath, requestMethod);
-            handleEndpoint(exchange, endpoint, pathParts);
-        } catch (NonExistentTaskException e) {
-            sendError(exchange, e.getMessage(), StatusCodes.NOT_FOUND.code);
-        } catch (TaskOverlapException e) {
-            sendError(exchange, e.getMessage(), StatusCodes.NOT_ACCEPTABLE.code);
-        } catch (Exception e) {
-            sendError(exchange, e.getMessage(), StatusCodes.INTERNAL_ERROR.code);
-        }
-    }
-
     public static void send(HttpExchange exchange,
                             String text,
                             int code
@@ -59,8 +41,32 @@ public abstract class BaseHttpHandler implements HttpHandler {
         send(exchange, text, code);
     }
 
-    protected abstract void handleEndpoint(HttpExchange exchange, Endpoint endpoint, String[] pathParts)
-            throws IOException;
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        try {
+            final String requestPath = exchange.getRequestURI()
+                                               .getPath();
+            final String requestMethod = exchange.getRequestMethod();
+            final String[] pathParts = getPathParts(requestPath);
+
+            final Endpoint endpoint = getTaskEndpoint(requestPath,
+                                                      requestMethod);
+            handleEndpoint(exchange, endpoint, pathParts);
+        } catch (NonExistentTaskException e) {
+            sendError(exchange, e.getMessage(), StatusCodes.NOT_FOUND.code);
+        } catch (TaskOverlapException e) {
+            sendError(exchange, e.getMessage(),
+                      StatusCodes.NOT_ACCEPTABLE.code);
+        } catch (Exception e) {
+            sendError(exchange, e.getMessage(),
+                      StatusCodes.INTERNAL_ERROR.code);
+        }
+    }
+
+    protected abstract void handleEndpoint(HttpExchange exchange,
+                                           Endpoint endpoint,
+                                           String[] pathParts
+    ) throws IOException;
 
     protected void sendText(HttpExchange exchange, String text) throws
             IOException {

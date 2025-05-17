@@ -4,7 +4,6 @@ import com.google.gson.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -21,10 +20,11 @@ class TaskDeserializerTest {
     void setUp() {
         taskDeserializer = new TaskDeserializer();
         context = mock(JsonDeserializationContext.class);
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .create();
     }
 
     @Test
@@ -49,12 +49,15 @@ class TaskDeserializerTest {
         jsonObject.add("startTime", gson.toJsonTree(LocalDateTime.now()));
         jsonObject.add("duration", gson.toJsonTree(Duration.ofHours(2)));
 
-        when(context.deserialize(any(JsonElement.class), eq(Statuses.class)))
-                .thenReturn(Statuses.IN_PROGRESS);
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(LocalDateTime.now());
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(Duration.ofHours(2));
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Statuses.class))).thenReturn(
+                Statuses.IN_PROGRESS);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(
+                LocalDateTime.now());
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(
+                Duration.ofHours(2));
 
         Task task = taskDeserializer.deserialize(jsonObject, null, context);
 
@@ -86,8 +89,9 @@ class TaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("status", gson.toJsonTree(Statuses.DONE));
 
-        when(context.deserialize(any(JsonElement.class), eq(Statuses.class)))
-                .thenReturn(Statuses.DONE);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Statuses.class))).thenReturn(
+                Statuses.DONE);
 
         Task task = taskDeserializer.deserialize(jsonObject, null, context);
 
@@ -100,8 +104,8 @@ class TaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("startTime", gson.toJsonTree(now));
 
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(now);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(now);
 
         Task task = taskDeserializer.deserialize(jsonObject, null, context);
 
@@ -114,8 +118,8 @@ class TaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("duration", gson.toJsonTree(duration));
 
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(duration);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(duration);
 
         Task task = taskDeserializer.deserialize(jsonObject, null, context);
 
@@ -125,6 +129,7 @@ class TaskDeserializerTest {
     @Test
     void deserialize_ShouldNotFailOnMissingFields() {
         JsonObject jsonObject = new JsonObject();
-        assertDoesNotThrow(() -> taskDeserializer.deserialize(jsonObject, null, context));
+        assertDoesNotThrow(
+                () -> taskDeserializer.deserialize(jsonObject, null, context));
     }
 }

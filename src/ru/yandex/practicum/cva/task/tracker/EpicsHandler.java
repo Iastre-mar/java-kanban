@@ -39,8 +39,7 @@ public class EpicsHandler extends BaseHttpHandler {
         return epic.getId() == 0 ? createEpic(epic) : updateEpic(epic);
     }
 
-    EpicTask parseEpicFromRequest(HttpExchange exchange) throws
-            IOException {
+    EpicTask parseEpicFromRequest(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody()
                                          .readAllBytes(),
                                  StandardCharsets.UTF_8);

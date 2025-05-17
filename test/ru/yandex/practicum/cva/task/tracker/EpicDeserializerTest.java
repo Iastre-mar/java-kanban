@@ -3,12 +3,9 @@ package ru.yandex.practicum.cva.task.tracker;
 import com.google.gson.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,10 +23,11 @@ class EpicDeserializerTest {
     void setUp() {
         epicDeserializer = new EpicDeserializer();
         context = mock(JsonDeserializationContext.class);
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .create();
 
         testTime = LocalDateTime.of(2023, 1, 1, 12, 0);
         testDuration = Duration.ofHours(2);
@@ -38,7 +36,8 @@ class EpicDeserializerTest {
     @Test
     void deserialize_ShouldCreateEpicWithDefaultValues() {
         JsonObject jsonObject = new JsonObject();
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
         assertEquals("Deserialized TECHNICAL", epic.getName());
         assertNull(epic.getDescription());
@@ -46,7 +45,8 @@ class EpicDeserializerTest {
         assertNull(epic.getStartTime());
         assertNull(epic.getEndTime());
         assertEquals(Duration.ZERO, epic.getDuration());
-        assertTrue(epic.getSubtasksIDs().isEmpty());
+        assertTrue(epic.getSubtasksIDs()
+                       .isEmpty());
     }
 
     @Test
@@ -65,15 +65,19 @@ class EpicDeserializerTest {
         subtasksArray.add(102);
         jsonObject.add("setOfSubtasksID", subtasksArray);
 
-        when(context.deserialize(any(JsonElement.class), eq(Statuses.class)))
-                .thenReturn(Statuses.IN_PROGRESS);
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(testTime)
-                .thenReturn(testTime.plusHours(2));
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(testDuration);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Statuses.class))).thenReturn(
+                Statuses.IN_PROGRESS);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(testTime)
+                                                          .thenReturn(
+                                                                  testTime.plusHours(
+                                                                          2));
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(testDuration);
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
         assertEquals(1, epic.getId());
         assertEquals("Test Epic", epic.getName());
@@ -94,12 +98,17 @@ class EpicDeserializerTest {
         subtasksArray.add(103);
         jsonObject.add("setOfSubtasksID", subtasksArray);
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
-        assertEquals(3, epic.getSubtasksIDs().size());
-        assertTrue(epic.getSubtasksIDs().contains(101));
-        assertTrue(epic.getSubtasksIDs().contains(102));
-        assertTrue(epic.getSubtasksIDs().contains(103));
+        assertEquals(3, epic.getSubtasksIDs()
+                            .size());
+        assertTrue(epic.getSubtasksIDs()
+                       .contains(101));
+        assertTrue(epic.getSubtasksIDs()
+                       .contains(102));
+        assertTrue(epic.getSubtasksIDs()
+                       .contains(103));
     }
 
     @Test
@@ -107,18 +116,22 @@ class EpicDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("setOfSubtasksID", new JsonArray());
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
-        assertTrue(epic.getSubtasksIDs().isEmpty());
+        assertTrue(epic.getSubtasksIDs()
+                       .isEmpty());
     }
 
     @Test
     void deserialize_ShouldIgnoreMissingSubtaskIds() {
         JsonObject jsonObject = new JsonObject();
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
-        assertTrue(epic.getSubtasksIDs().isEmpty());
+        assertTrue(epic.getSubtasksIDs()
+                       .isEmpty());
     }
 
     @Test
@@ -128,8 +141,9 @@ class EpicDeserializerTest {
         subtasksArray.add("invalid");
         jsonObject.add("setOfSubtasksID", subtasksArray);
 
-        assertThrows(NumberFormatException.class, () ->
-                epicDeserializer.deserialize(jsonObject, null, context));
+        assertThrows(NumberFormatException.class,
+                     () -> epicDeserializer.deserialize(jsonObject, null,
+                                                        context));
     }
 
     @Test
@@ -138,11 +152,14 @@ class EpicDeserializerTest {
         jsonObject.add("startTime", gson.toJsonTree(testTime));
         jsonObject.add("endTime", gson.toJsonTree(testTime.plusHours(1)));
 
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(testTime)
-                .thenReturn(testTime.plusHours(1));
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(testTime)
+                                                          .thenReturn(
+                                                                  testTime.plusHours(
+                                                                          1));
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
         assertEquals(testTime, epic.getStartTime());
         assertEquals(testTime.plusHours(1), epic.getEndTime());
@@ -153,10 +170,11 @@ class EpicDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("duration", gson.toJsonTree(testDuration));
 
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(testDuration);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(testDuration);
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
         assertEquals(testDuration, epic.getDuration());
     }
@@ -167,7 +185,8 @@ class EpicDeserializerTest {
         jsonObject.addProperty("name", "Partial Epic");
         jsonObject.addProperty("description", "Partial Description");
 
-        EpicTask epic = epicDeserializer.deserialize(jsonObject, null, context);
+        EpicTask epic = epicDeserializer.deserialize(jsonObject, null,
+                                                     context);
 
         assertEquals("Partial Epic", epic.getName());
         assertEquals("Partial Description", epic.getDescription());
@@ -175,6 +194,7 @@ class EpicDeserializerTest {
         assertNull(epic.getStartTime());
         assertNull(epic.getEndTime());
         assertEquals(Duration.ZERO, epic.getDuration());
-        assertTrue(epic.getSubtasksIDs().isEmpty());
+        assertTrue(epic.getSubtasksIDs()
+                       .isEmpty());
     }
 }

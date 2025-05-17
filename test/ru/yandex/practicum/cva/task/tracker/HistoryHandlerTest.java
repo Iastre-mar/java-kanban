@@ -15,7 +15,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class HistoryHandlerTest {
@@ -29,8 +30,11 @@ class HistoryHandlerTest {
     @BeforeEach
     void setUp() {
         mockTaskManager = mock(TaskManager.class);
-        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                                .registerTypeAdapter(Duration.class, new DurationAdapter()).create();
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .create();
         historyHandler = new HistoryHandler(mockTaskManager, gson);
         mockExchange = mock(HttpExchange.class);
         mockHeaders = mock(Headers.class);
@@ -50,12 +54,15 @@ class HistoryHandlerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(mockExchange.getResponseBody()).thenReturn(outputStream);
 
-        historyHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL, new String[]{"history"});
+        historyHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL,
+                                      new String[]{"history"});
 
         String expected = gson.toJson(List.of(task1, task2));
         assertEquals(expected, outputStream.toString());
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, expected.getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 expected.getBytes().length);
     }
 
     @Test
@@ -68,12 +75,15 @@ class HistoryHandlerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(mockExchange.getResponseBody()).thenReturn(outputStream);
 
-        historyHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL, new String[]{"history"});
+        historyHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL,
+                                      new String[]{"history"});
 
         String expected = gson.toJson(List.of());
         assertEquals(expected, outputStream.toString());
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, expected.getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 expected.getBytes().length);
     }
 
     @Test
@@ -81,8 +91,10 @@ class HistoryHandlerTest {
         when(mockExchange.getRequestMethod()).thenReturn("POST");
         when(mockExchange.getRequestURI()).thenReturn(URI.create("/history"));
 
-        assertThrows(NonExistentEntityException.class, () ->
-                historyHandler.handleEndpoint(mockExchange, Endpoint.UNKNOWN, new String[]{"history"}));
+        assertThrows(NonExistentEntityException.class,
+                     () -> historyHandler.handleEndpoint(mockExchange,
+                                                         Endpoint.UNKNOWN,
+                                                         new String[]{"history"}));
     }
 
     @Test

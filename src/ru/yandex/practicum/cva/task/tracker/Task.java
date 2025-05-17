@@ -101,7 +101,7 @@ public class Task implements Cloneable {
     }
 
     public DateTimeFormatter getDtf() {
-        return this.dtf;
+        return dtf;
     }
 
     @Override

@@ -37,8 +37,7 @@ public class TasksHandler extends BaseHttpHandler {
         return task.getId() == 0 ? createTask(task) : updateTask(task);
     }
 
-    Task parseTaskFromRequest(HttpExchange exchange) throws
-            IOException {
+    Task parseTaskFromRequest(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody()
                                          .readAllBytes(),
                                  StandardCharsets.UTF_8);

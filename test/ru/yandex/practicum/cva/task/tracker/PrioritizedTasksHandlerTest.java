@@ -14,7 +14,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class PrioritizedTasksHandlerTest {
@@ -28,11 +29,13 @@ class PrioritizedTasksHandlerTest {
     @BeforeEach
     void setUp() {
         mockTaskManager = mock(TaskManager.class);
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
-        prioritizedHandler = new PrioritizedTasksHandler(mockTaskManager, gson);
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .create();
+        prioritizedHandler = new PrioritizedTasksHandler(mockTaskManager,
+                                                         gson);
         mockExchange = mock(HttpExchange.class);
         mockHeaders = mock(Headers.class);
 
@@ -42,30 +45,36 @@ class PrioritizedTasksHandlerTest {
     @Test
     void handleEndpoint_GetPrioritizedTasks() throws IOException {
         when(mockExchange.getRequestMethod()).thenReturn("GET");
-        when(mockExchange.getRequestURI()).thenReturn(URI.create("/prioritized"));
+        when(mockExchange.getRequestURI()).thenReturn(
+                URI.create("/prioritized"));
 
         Task task1 = new Task("High priority");
         Task task2 = new Task("Medium priority");
-        when(mockTaskManager.getPrioritizedTasks()).thenReturn(List.of(task1, task2));
+        when(mockTaskManager.getPrioritizedTasks()).thenReturn(
+                List.of(task1, task2));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(mockExchange.getResponseBody()).thenReturn(outputStream);
 
 
-        prioritizedHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL, new String[]{"prioritized"});
+        prioritizedHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL,
+                                          new String[]{"prioritized"});
 
 
         String expected = gson.toJson(List.of(task1, task2));
         assertEquals(expected, outputStream.toString());
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, expected.getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 expected.getBytes().length);
     }
 
     @Test
     void handleEndpoint_GetPrioritizedTasksEmpty() throws IOException {
 
         when(mockExchange.getRequestMethod()).thenReturn("GET");
-        when(mockExchange.getRequestURI()).thenReturn(URI.create("/prioritized"));
+        when(mockExchange.getRequestURI()).thenReturn(
+                URI.create("/prioritized"));
 
         when(mockTaskManager.getPrioritizedTasks()).thenReturn(List.of());
 
@@ -73,24 +82,32 @@ class PrioritizedTasksHandlerTest {
         when(mockExchange.getResponseBody()).thenReturn(outputStream);
 
 
-        prioritizedHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL, new String[]{"prioritized"});
+        prioritizedHandler.handleEndpoint(mockExchange, Endpoint.GET_ALL,
+                                          new String[]{"prioritized"});
 
 
         String expected = gson.toJson(List.of());
         assertEquals(expected, outputStream.toString());
-        verify(mockHeaders).add("Content-Type", "application/json;charset=utf-8");
-        verify(mockExchange).sendResponseHeaders(200, expected.getBytes().length);
+        verify(mockHeaders).add("Content-Type",
+                                "application/json;charset=utf-8");
+        verify(mockExchange).sendResponseHeaders(200,
+                                                 expected.getBytes().length);
     }
 
     @Test
     void handleEndpoint_UnknownMethod() {
 
         when(mockExchange.getRequestMethod()).thenReturn("POST");
-        when(mockExchange.getRequestURI()).thenReturn(URI.create("/prioritized"));
+        when(mockExchange.getRequestURI()).thenReturn(
+                URI.create("/prioritized"));
 
 
-        assertThrows(NonExistentEntityException.class, () ->
-                prioritizedHandler.handleEndpoint(mockExchange, Endpoint.UNKNOWN, new String[]{"prioritized"}));
+        assertThrows(NonExistentEntityException.class,
+                     () -> prioritizedHandler.handleEndpoint(mockExchange,
+                                                             Endpoint.UNKNOWN,
+                                                             new String[]{
+                                                                     "prioritized"
+                                                             }));
     }
 
     @Test
@@ -98,7 +115,8 @@ class PrioritizedTasksHandlerTest {
 
         Task task1 = new Task("Urgent task");
         Task task2 = new Task("Important task");
-        when(mockTaskManager.getPrioritizedTasks()).thenReturn(List.of(task1, task2));
+        when(mockTaskManager.getPrioritizedTasks()).thenReturn(
+                List.of(task1, task2));
 
 
         String result = prioritizedHandler.getPrioritizedTasks();

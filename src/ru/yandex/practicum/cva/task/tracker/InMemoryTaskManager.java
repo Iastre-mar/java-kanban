@@ -164,7 +164,6 @@ public class InMemoryTaskManager implements TaskManager {
         newEpic.addNewSubtask(id);
 
 
-
         oldTask.setParentId(newParentId);
 
         oldTask.setStatus(task.getStatus());
@@ -369,7 +368,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isIntersectionOfTime(Task task1, Task task2) {
-        return (!task1.equals(task2)) && task1.getStartTime()
+        return (!task1.equals(task2)) &&
+               task1.getStartTime()
                     .isBefore(task2.getEndTime()) &&
                task2.getStartTime()
                     .isBefore(task1.getEndTime());

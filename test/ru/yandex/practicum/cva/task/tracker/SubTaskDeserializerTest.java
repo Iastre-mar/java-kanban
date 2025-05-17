@@ -3,9 +3,7 @@ package ru.yandex.practicum.cva.task.tracker;
 import com.google.gson.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -24,10 +22,11 @@ class SubTaskDeserializerTest {
     void setUp() {
         subTaskDeserializer = new SubTaskDeserializer();
         context = mock(JsonDeserializationContext.class);
-        gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
+        gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
+                                                     new LocalDateTimeAdapter())
+                                .registerTypeAdapter(Duration.class,
+                                                     new DurationAdapter())
+                                .create();
 
         testTime = LocalDateTime.of(2023, 1, 1, 12, 0);
         testDuration = Duration.ofHours(2);
@@ -36,7 +35,8 @@ class SubTaskDeserializerTest {
     @Test
     void deserialize_ShouldCreateSubTaskWithDefaultValues() {
         JsonObject jsonObject = new JsonObject();
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals("Deserialized TECHNICAL", subTask.getName());
         assertNull(subTask.getDescription());
@@ -57,14 +57,17 @@ class SubTaskDeserializerTest {
         jsonObject.add("duration", gson.toJsonTree(testDuration));
         jsonObject.addProperty("parentId", 101);
 
-        when(context.deserialize(any(JsonElement.class), eq(Statuses.class)))
-                .thenReturn(Statuses.IN_PROGRESS);
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(testTime);
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(testDuration);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Statuses.class))).thenReturn(
+                Statuses.IN_PROGRESS);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(
+                testTime);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(testDuration);
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals(1, subTask.getId());
         assertEquals("Test SubTask", subTask.getName());
@@ -80,7 +83,8 @@ class SubTaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("parentId", 201);
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals(201, subTask.getParentId());
     }
@@ -89,7 +93,8 @@ class SubTaskDeserializerTest {
     void deserialize_ShouldHandleMissingParentId() {
         JsonObject jsonObject = new JsonObject();
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals(0, subTask.getParentId());
     }
@@ -99,10 +104,12 @@ class SubTaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("startTime", gson.toJsonTree(testTime));
 
-        when(context.deserialize(any(JsonElement.class), eq(LocalDateTime.class)))
-                .thenReturn(testTime);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(LocalDateTime.class))).thenReturn(
+                testTime);
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals(testTime, subTask.getStartTime());
     }
@@ -112,10 +119,11 @@ class SubTaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("duration", gson.toJsonTree(testDuration));
 
-        when(context.deserialize(any(JsonElement.class), eq(Duration.class)))
-                .thenReturn(testDuration);
+        when(context.deserialize(any(JsonElement.class),
+                                 eq(Duration.class))).thenReturn(testDuration);
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals(testDuration, subTask.getDuration());
     }
@@ -126,7 +134,8 @@ class SubTaskDeserializerTest {
         jsonObject.addProperty("name", "Partial SubTask");
         jsonObject.addProperty("description", "Partial Description");
 
-        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null, context);
+        SubTask subTask = subTaskDeserializer.deserialize(jsonObject, null,
+                                                          context);
 
         assertEquals("Partial SubTask", subTask.getName());
         assertEquals("Partial Description", subTask.getDescription());
@@ -141,7 +150,8 @@ class SubTaskDeserializerTest {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("parentId", "invalid");
 
-        assertThrows(NumberFormatException.class, () ->
-                subTaskDeserializer.deserialize(jsonObject, null, context));
+        assertThrows(NumberFormatException.class,
+                     () -> subTaskDeserializer.deserialize(jsonObject, null,
+                                                           context));
     }
 }
