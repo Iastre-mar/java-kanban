@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public class Task implements Cloneable {
-    private final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
     protected int id;
     protected String name;
     protected String description;
@@ -101,7 +101,7 @@ public class Task implements Cloneable {
     }
 
     public DateTimeFormatter getDtf() {
-        return this.dtf;
+        return dtf;
     }
 
     @Override

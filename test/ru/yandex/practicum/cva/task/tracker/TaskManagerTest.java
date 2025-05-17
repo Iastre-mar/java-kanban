@@ -3,7 +3,10 @@ package ru.yandex.practicum.cva.task.tracker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -180,9 +183,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void getTaskByIdShouldReturnRightTask() {
         setUpFullStand();
         Task commonTask = new Task("Третья");
+        commonTask.setStartTime(LocalDateTime.of(2050, 1, 1, 1, 1));
+        commonTask.setDuration(Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
         tm.createTask(commonTask);
         assertEquals(commonTask, tm.getTaskById(commonTask.getId()));
-        assertNotEquals(commonTask, tm.getTaskById(commonTask.getId() - 1));
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.getTaskById(commonTask.getId() - 1));
     }
 
     @Test
@@ -191,13 +197,16 @@ abstract class TaskManagerTest<T extends TaskManager> {
         EpicTask epicTask = new EpicTask("Третий эпик");
         tm.createEpic(epicTask);
         assertEquals(epicTask, tm.getEpicById(epicTask.getId()));
-        assertNotEquals(epicTask, tm.getEpicById(epicTask.getId() - 1));
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.getEpicById(epicTask.getId() - 1));
     }
 
     @Test
     void getSubtaskByIdShouldReturnRightSubtask() {
         setUpFullStand();
         SubTask subTask = new SubTask("Четвертая подзадача");
+        subTask.setStartTime(LocalDateTime.of(2050, 1, 1, 1, 1));
+        subTask.setDuration(Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
         tm.createSubTask(subTask);
         assertEquals(subTask, tm.getSubtaskById(subTask.getId()));
         assertNotEquals(subTask, tm.getSubtaskById(subTask.getId() - 1));
@@ -208,6 +217,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         setUpFullStand();
         Task commonTask = new Task("Третья");
         Statuses originalStatus = commonTask.getStatus(); //Shall be NEW
+        commonTask.setStartTime(LocalDateTime.of(2050, 1, 1, 1, 1));
+        commonTask.setDuration(Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
         tm.createTask(commonTask);
         commonTask.setDescription("Третья задача");
         tm.updateTask(commonTask);
@@ -289,9 +300,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(Integer.valueOf(1), firstCommonTask.getId());
 
-        Task firstCommonTaskAfterDelete = tm.getTaskById(1);
-
-        assertNull(firstCommonTaskAfterDelete);
+        assertThrows(NonExistentTaskException.class, () -> tm.getTaskById(1));
     }
 
     @Test
@@ -380,9 +389,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubtaskByIdShallNotFailOnNonExistentid() {
+    void deleteSubtaskByIdShallFailOnNonExistentid() {
         setUpFullStand();
-        tm.deleteSubtaskById(9999);
+        assertThrows(NonExistentTaskException.class,
+                     () -> tm.deleteSubtaskById(9999));
     }
 
     @Test

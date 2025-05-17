@@ -1,18 +1,23 @@
 import ru.yandex.practicum.cva.task.tracker.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Поехали!");
 
-        TaskManager tm = new FileBackedTaskManager(); //Managers.getDefault();
+        TaskManager tm = new InMemoryTaskManager(); //Managers.getDefault();
 
 
         // Создание объектов
+
 
         Task firstCommonTask = new Task("Первая");
         Task secondCommonTask = new Task("Вторая", "Описание второй");
@@ -26,6 +31,26 @@ public class Main {
         SubTask thirdSubTask = new SubTask("Третья подзадача",
                                            "Принадлежит второму Эпику");
 
+        firstCommonTask.setStartTime(LocalDateTime.of(2011, 11, 11, 11, 11));
+        firstCommonTask.setDuration(
+                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
+
+        secondCommonTask.setStartTime(LocalDateTime.of(2012, 11, 11, 11, 11));
+        secondCommonTask.setDuration(
+                Duration.of(1, TimeUnit.HOURS.toChronoUnit()));
+
+
+        firstSubTask.setStartTime(LocalDateTime.of(2007, 11, 11, 11, 11));
+        firstSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
+
+        secondSubTask.setStartTime(LocalDateTime.of(2008, 11, 11, 11, 11));
+        secondSubTask.setDuration(
+                Duration.of(3, TimeUnit.DAYS.toChronoUnit()));
+
+        thirdSubTask.setStartTime(LocalDateTime.of(2009, 1, 1, 11, 11));
+        thirdSubTask.setDuration(
+                Duration.of(364, TimeUnit.DAYS.toChronoUnit()));
         // 'Создание' задач
 
         tm.createTask(firstCommonTask);
@@ -205,6 +230,20 @@ public class Main {
         tm.getHistory()
           .forEach(System.out::println);
 
+
+        System.out.println(
+                "Двенадцатый тест, сервер, содержимое:");
+
+        tm.getAllTask()
+          .forEach(System.out::println);
+        tm.getAllEpic()
+          .forEach(System.out::println);
+        tm.getAllSubtask()
+          .forEach(System.out::println);
+
+
+        HttpTaskServer httpTaskServer = new HttpTaskServer(tm);
+        httpTaskServer.start();
 
     }
 

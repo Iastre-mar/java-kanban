@@ -105,7 +105,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (OutputStream fos = new FileOutputStream(autoSaveFilePath);
              OutputStreamWriter osw = new OutputStreamWriter(fos);
-             BufferedWriter bw = new BufferedWriter(osw);
+             BufferedWriter bw = new BufferedWriter(osw)
         ) {
 
             bw.write(String.join(",", ColumnsInFile.getTableHeaderList()));
@@ -135,7 +135,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (InputStream fis = new FileInputStream(file);
              InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader br = new BufferedReader(isr);
+             BufferedReader br = new BufferedReader(isr)
         ) {
 
             String headerOfTable = br.readLine();
