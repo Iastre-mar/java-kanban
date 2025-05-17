@@ -387,9 +387,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubtaskByIdShallNotFailOnNonExistentid() {
+    void deleteSubtaskByIdShallFailOnNonExistentid() {
         setUpFullStand();
-        tm.deleteSubtaskById(9999);
+        assertThrows(NonExistentTaskException.class, () -> tm.deleteSubtaskById(9999));
     }
 
     @Test

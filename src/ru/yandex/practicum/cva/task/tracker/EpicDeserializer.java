@@ -1,12 +1,9 @@
 package ru.yandex.practicum.cva.task.tracker;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,11 +32,22 @@ public class EpicDeserializer implements JsonDeserializer<EpicTask> {
                     (LocalDateTime) context.deserialize(jsonObj.get("startTime"), LocalDateTime.class));
         }
 
-        Set<Integer> subtaskIds;
-        if (jsonObj.has("subtaskIds") && jsonObj.get("subtaskIds").isJsonArray()) {
-            subtaskIds = context.deserialize(jsonObj.get("subtaskIds"), Set.class);
-        } else {
-            subtaskIds = new HashSet<>();
+        if (jsonObj.has("endTime")) {
+            epicTask.setEndTime(
+                    (LocalDateTime) context.deserialize(jsonObj.get("endTime"), LocalDateTime.class));
+        }
+
+        if (jsonObj.has("duration")) {
+            epicTask.setDuration(
+                    context.deserialize(jsonObj.get("duration"), Duration.class));
+        }
+
+        Set<Integer> subtaskIds = new HashSet<>();
+        if (jsonObj.has("setOfSubtasksID") && jsonObj.get("setOfSubtasksID").isJsonArray()) {
+            JsonArray subtasksArray = jsonObj.getAsJsonArray("setOfSubtasksID");
+            for (JsonElement element : subtasksArray) {
+                subtaskIds.add(element.getAsInt());
+            }
         }
         epicTask.setSubtasksId(subtaskIds);
 

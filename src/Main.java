@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Поехали!");
 
-        TaskManager tm = new FileBackedTaskManager(); //Managers.getDefault();
+        TaskManager tm = new InMemoryTaskManager(); //Managers.getDefault();
 
 
         // Создание объектов
@@ -229,6 +229,18 @@ public class Main {
 
         tm.getHistory()
           .forEach(System.out::println);
+
+
+        System.out.println(
+                "Двенадцатый тест, сервер, содержимое:");
+
+        tm.getAllTask()
+          .forEach(System.out::println);
+        tm.getAllEpic()
+          .forEach(System.out::println);
+        tm.getAllSubtask()
+          .forEach(System.out::println);
+
 
         HttpTaskServer httpTaskServer = new HttpTaskServer(tm);
         httpTaskServer.start();

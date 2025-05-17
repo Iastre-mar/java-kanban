@@ -49,6 +49,8 @@ public class HttpTaskServer {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .registerTypeAdapter(EpicTask.class, new EpicDeserializer())
+                .registerTypeAdapter(Task.class, new TaskDeserializer())
+                .registerTypeAdapter(SubTask.class, new SubTaskDeserializer())
                 .create();
     }
 }

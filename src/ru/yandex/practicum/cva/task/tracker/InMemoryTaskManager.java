@@ -123,7 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubtaskById(int id) {
         SubTask subTask = this.subTaskMap.get(id);
-        checkIsEntityExists(subTask, id, TaskType.EPIC);
+        checkIsEntityExists(subTask, id, TaskType.SUBTASK);
         historyManager.add(subTask);
         return subTask;
     }
@@ -146,20 +146,26 @@ public class InMemoryTaskManager implements TaskManager {
 
         int id = task.getId();
         SubTask oldTask = getSubtaskByIdInternal(id);
+        // Должно сдохнуть не обновив важные данные если epic неправильный
+        int newParentId = task.getParentId();
+        EpicTask newEpic = getEpicByIdInternal(newParentId);
+
+
         oldTask.setName(task.getName());
         oldTask.setDescription(task.getDescription());
 
         int oldParentId = oldTask.getParentId();
 
+
         if (oldParentId != 0) {
             getEpicByIdInternal(oldParentId).removeSubtask(id);
             checkEpic(oldParentId);
         }
+        newEpic.addNewSubtask(id);
 
-        int newParentId = task.getParentId();
+
+
         oldTask.setParentId(newParentId);
-
-        getEpicByIdInternal(newParentId).addNewSubtask(id);
 
         oldTask.setStatus(task.getStatus());
 
@@ -247,8 +253,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void addTaskToPrioritizeTasks(Task task) {
-        removeTaskFromPrioritizeTasks(task);
+
         if (checkCanTaskBeAddedToPriorityList(task)) {
+            removeTaskFromPrioritizeTasks(task);
             prioritizeTasks.add(task);
         } else {
             throw new TaskOverlapException("task overlapped with other");
@@ -327,15 +334,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private Task getTaskByIdInternal(int id) {
-        return this.taskMap.getOrDefault(id, new Task(""));
+        Task task = this.taskMap.getOrDefault(id, null);
+        checkIsEntityExists(task, id, TaskType.TASK);
+        return task;
     }
 
     private EpicTask getEpicByIdInternal(int id) {
-        return this.epicMap.getOrDefault(id, new EpicTask(""));
+        EpicTask epicTask = this.epicMap.getOrDefault(id, null);
+        checkIsEntityExists(epicTask, id, TaskType.EPIC);
+        return epicTask;
     }
 
     private SubTask getSubtaskByIdInternal(int id) {
-        return this.subTaskMap.getOrDefault(id, new SubTask(""));
+        SubTask subTask = this.subTaskMap.getOrDefault(id, null);
+        checkIsEntityExists(subTask, id, TaskType.SUBTASK);
+        return subTask;
     }
 
     private boolean checkCanTaskBeAddedToPriorityList(Task task) {
@@ -356,7 +369,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isIntersectionOfTime(Task task1, Task task2) {
-        return task1.getStartTime()
+        return (!task1.equals(task2)) && task1.getStartTime()
                     .isBefore(task2.getEndTime()) &&
                task2.getStartTime()
                     .isBefore(task1.getEndTime());
@@ -382,5 +395,6 @@ public class InMemoryTaskManager implements TaskManager {
                     "%s with id %s does not exists".formatted(taskType, id));
         }
     }
+
 
 }
