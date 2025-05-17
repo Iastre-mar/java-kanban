@@ -116,13 +116,13 @@ public abstract class BaseHttpHandler implements HttpHandler {
         };
     }
 
-    private boolean isEpicSubtasks(String[] pathParts) {
+    boolean isEpicSubtasks(String[] pathParts) {
         return "epics".equals(pathParts[0]) &&
                "subtasks".equals(pathParts[2]) &&
                isInteger(pathParts[1]);
     }
 
-    private boolean isInteger(String str) {
+    boolean isInteger(String str) {
         boolean res = false;
         try {
             Integer.parseInt(str);

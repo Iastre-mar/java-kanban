@@ -37,7 +37,7 @@ public class TasksHandler extends BaseHttpHandler {
         return task.getId() == 0 ? createTask(task) : updateTask(task);
     }
 
-    private Task parseTaskFromRequest(HttpExchange exchange) throws
+    Task parseTaskFromRequest(HttpExchange exchange) throws
             IOException {
         String body = new String(exchange.getRequestBody()
                                          .readAllBytes(),
@@ -71,7 +71,7 @@ public class TasksHandler extends BaseHttpHandler {
         taskManager.deleteTaskById(id);
     }
 
-    private int getId(String[] pathParts) {
+    int getId(String[] pathParts) {
         return Integer.parseInt(pathParts[1]);
     }
 

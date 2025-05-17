@@ -36,7 +36,7 @@ public class SubtasksHandler extends BaseHttpHandler {
         return subTask.getId() == 0 ? createSubtask(subTask) : updateSubtask(subTask);
     }
 
-    private SubTask parseSubtaskFromRequest(HttpExchange exchange) throws
+    SubTask parseSubtaskFromRequest(HttpExchange exchange) throws
             IOException {
         String body = new String(exchange.getRequestBody()
                                          .readAllBytes(),
@@ -70,7 +70,7 @@ public class SubtasksHandler extends BaseHttpHandler {
         taskManager.deleteSubtaskById(id);
     }
 
-    private int getId(String[] pathParts) {
+    int getId(String[] pathParts) {
         return Integer.parseInt(pathParts[1]);
     }
 

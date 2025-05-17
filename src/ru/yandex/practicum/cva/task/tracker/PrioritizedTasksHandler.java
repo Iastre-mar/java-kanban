@@ -27,7 +27,7 @@ public class PrioritizedTasksHandler extends BaseHttpHandler {
         }
     }
 
-    private String getPrioritizedTasks() {
+    String getPrioritizedTasks() {
         return gson.toJson(taskManager.getPrioritizedTasks());
     }
 

@@ -26,7 +26,7 @@ public class HistoryHandler extends BaseHttpHandler {
         }
     }
 
-    private String getHistory() {
+    String getHistory() {
         return gson.toJson(taskManager.getHistory());
     }
 
